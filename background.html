@@ -2,26 +2,12 @@
 <html>
   <head>
     <script>
-chrome.tabs.getCurrent(function(tab) { setPopup(tab.id, {}, tab.url); });
-chrome.tabs.onUpdated.addListener(setPopup);
-chrome.tabs.onSelectionChanged.addListener(
-    function(tab) { setPopup(tab.id, {}, tab.url); }
-);
-
-function setPopup(tabId, changeInfo, tab) {
-    var uri = changeInfo.url || tab.url
-    chrome.browserAction.setPopup({
-        "tabId": tabId,
-        "popup": "popup.html?escaped_uri=" + encodeURIComponent(uri)
-    });
-}
-
 function xhrCall(url, callback) {
     var xhr = new XMLHttpRequest();
     xhr.open("GET", url, true);
     xhr.onreadystatechange = function() {
         if (xhr.readyState == 4) {
-            callback(xhr.responseText);
+            callback({"content": xhr.responseText, "status": xhr.status});
         }
     }
     xhr.send();
@@ -29,7 +15,11 @@ function xhrCall(url, callback) {
 
 chrome.extension.onRequest.addListener(
     function(request, sender, callback) {
-        xhrCall(request.url, callback);
+        if (request.action == "get") {
+            xhrCall(request.url, callback);
+        } else if (request.action == "log") {
+            console.log(request.value);
+        }
     }
 );
     </script>

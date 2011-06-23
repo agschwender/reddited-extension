@@ -1,3 +1,21 @@
+body {
+  min-width:357px;
+  overflow-x:hidden;
+}
+
+#results, #results-none, #results-error, #loader {
+  width: 350px;
+  padding: 5px 0px 5px 0px;
+}
+#results-none, #results-error { font-size: small; padding: 5px; }
+
+#loader { height: 50px; }
+#loader img { display: block; margin: 17px auto 0px auto; width: 128px; height: 15px; }
+
+/**
+ * Copied from reddit css file
+ */
+
 html {
  height:100%;
 }
@@ -30,8 +48,6 @@ a:focus { -moz-outline-style:none; }
  border-top-right-radius:6px;
  -moz-border-radius-topright:6px;
 }
-
-#results { width: 335px; }
 
 .hover a:hover { text-decoration:underline }
 .selected { font-weight:bold; }
@@ -120,7 +136,7 @@ a:focus { -moz-outline-style:none; }
 .thing .title.loggedin:visited { color:#551a8b }
 .thing .title.loggedin.click { color:#551a8b }
 .thing .title.loggedin.click:visited { color:#551a8b }
-.sitetable { list-style-type:none; padding: 5px 0px 0px 0px; }
+.sitetable { list-style-type:none; }
 .odd { }
 .even { }
 .entry .buttons li {
@@ -170,11 +186,93 @@ a:focus { -moz-outline-style:none; }
  text-align:right;
 }
 
+.compressed { margin-bottom:5px; }
+.compressed .rank { margin-top:10px; }
+.compressed .title { margin:-2px 0 3px }
+.compressed .score { color:#888888 }
+.compressed .score-placeholder { height:3px }
+.compressed .subreddit { font-weight:bold }
+.compressed .tagline { display:inline; margin-right: 12px }
+.compressed .expando-button { display:none; }
 .score.likes, .score.dislikes {display:none;}
 .likes .score, .dislikes .score {display:none;}
 .likes .score.likes {display:inline;}
 .dislikes .score.dislikes {display:inline;}
 .likes div.score.likes {display:block;}
 .dislikes div.score.dislikes {display:block;}
+
+.vote-note {
+ padding-left:3px;
+ max-width:150px;
+}
+.vote-a-notes {
+ color:red;
+}
+.vote-up {
+ color:orangered;
+}
+.vote-down {
+ color:#336699;
+}
+.vote-invalid {
+ color:#888888 !important;
+ font-style:italic;
+}
+.unvotable-message {
+ border:solid 1px #ff6600;
+ margin-top:4px;
+ padding:1px 3px;
+ -moz-border-radius:3px;
+ -webkit-border-radius:3px;
+ border-radius:3px;
+ display:none;
+}
+.bottommenu { color:gray; font-size: smaller; clear: both}
+.bottommenu a { color:gray; text-decoration: underline;   }
+.button {
+ border-collapse:collapse;
+ color:gray;
+ text-align:center;
+ margin:1px;
+ }
+.button #cover {
+ position:relative;
+ }
+.button .cover {
+ background:white;
+}
+.button #popup {
+ position:absolute;
+ width:80%;
+ z-index:1001;
+ background:white;
+ padding:1px;
+ left:0px;
+ top:0px;
+ margin:0px;
+ border-color:#B2B2B2 black black #B2B2B2;
+ border-style:solid;
+ border-width:1px;
+}
+.button .arrow { width:15px; }
+.num { font-weight:bold; font-size: larger }
+.button.thing {
+ margin:0px;
+ padding:0px;
+}
+.button-body {
+ background-color:transparent;
+}
+
+.expando {
+ clear:left;
+ margin:5px 0 5px 0;
+}
+.expando-content {
+ display:none;
+}
+.expando-button {
+ display: none;
+}
 
 .clearleft { clear:left; height: 0px; }

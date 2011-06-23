@@ -3,56 +3,27 @@
     <link rel="stylesheet" href="css/reddit.css" />
     <script type="text/javascript" src="js/jquery-1.6.1.min.js"></script>
     <script type="text/javascript" src="js/script.js"></script>
-    <style>
-body {
-  min-width:357px;
-  overflow-x:hidden;
-}
-    </style>
     <script>
-sendRedditSearch(parseURI());
+      $(document).ready(function() {
+          chrome.tabs.getSelected(
+              null,
+              function(tab) {
+                  sendRedditSearch(tab.url);
+                  $('.submit-uri').each(function() {
+                      $(this).attr('href', getRedditSubmitURI(tab.url));
+                  });
+              }
+          );
+      });
     </script>
   </head>
   <body>
-    <div id="result-template" class="thing link" style="display: none;">
-      <p class="parent"></p>
-      <span class="rank" style="width:0px;display:none;"></span>
-      <div class="midcol" style="width:5ex;">
-        <div class="arrow up"></div>
-        <div class="score dislikes"></div>
-        <div class="score unvoted"></div>
-        <div class="score likes"></div>
-        <div class="arrow down"></div>
-      </div>
-      <div class="entry">
-        <p class="title">
-          <a class="title click" href="#" target="_blank"></a>
-          <span class="domain">(<a href="#" target="_blank"></a>)</span>
-        </p>
-        <p class="tagline">
-          submitted
-          <time></time>
-          ago by
-          <a href="#" target="_blank" class="author"></a>
-          <span class="userattrs"></span>
-          to
-          <a href="#" target="_blank" class="subreddit hover"></a>
-        </p>
-        <ul class="flat-list buttons">
-          <li class="first">
-            <a class="comments" href="#" target="_blank"></a>
-          </li>
-          <li class="share">
-            <span class="share-button toggle">
-              <a class="option active" href="#" target="_blank" tabindex="100">share</a>
-              <a class="option" href="#" target="_blank">cancel</a>
-            </span>
-          </li>
-        </ul>
-      </div>
+    <div id="loader"><img src="images/loader.gif" /></div>
+    <div id="results-none" style="display: none;">
+      Look at you finding new content. This page has not been submitted to reddit. Maybe you should <a class="submit-uri" href="#" target="_blank">submit it</a> yourself. You know you want to.
     </div>
-    <div id="result-none" style="display: none;">
-      Look at you finding new content. This url has not been submitted to reddit.
+    <div id="results-error" style="display: none;">
+      Reddit seems to be having some problems, but, you know, it's reddit so you're probably not that shocked.
     </div>
     <div id="results" class="sitetable linklisting" style="display: none;"></div>
   </body>

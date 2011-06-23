@@ -1,14 +1,17 @@
 {
     "name": "Reddited",
-    "description": "Find out if a url you are visiting was submitted to Reddit.",
+    "description": "Find out if the page you are visiting has been submitted to Reddit.",
     "version": "0.1",
     "background_page": "background.html",
     "icons": {
-        "16": "icon.png"
+        "16": "images/icon48.png",
+        "48": "images/icon48.png",
+        "128": "images/icon128.png"
     },
-    "permissions": ["tabs", "http://*/*", "https://*/*"],
+    "permissions": ["tabs", "http://www.reddit.com/", "http://api.reddit.com/"],
     "browser_action": {
-        "default_icon": "icon.png",
-        "default_title": "Check if this page has been submitted to Reddit"
+        "default_icon": "images/icon48.png",
+        "default_title": "Check if this page has been submitted to Reddit",
+        "popup": "popup.html"
     }
 }
