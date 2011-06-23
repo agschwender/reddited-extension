@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script>
+chrome.tabs.getCurrent(function(tab) { setPopup(tab.id, {}, tab.url); });
+chrome.tabs.onUpdated.addListener(setPopup);
+chrome.tabs.onSelectionChanged.addListener(
+    function(tab) { setPopup(tab.id, {}, tab.url); }
+);
+
+function setPopup(tabId, changeInfo, tab) {
+    var uri = changeInfo.url || tab.url
+    chrome.browserAction.setPopup({
+        "tabId": tabId,
+        "popup": "popup.html?escaped_uri=" + encodeURIComponent(uri)
+    });
+}
+
+function xhrCall(url, callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", url, true);
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4) {
+            callback(xhr.responseText);
+        }
+    }
+    xhr.send();
+}
+
+chrome.extension.onRequest.addListener(
+    function(request, sender, callback) {
+        xhrCall(request.url, callback);
+    }
+);
+    </script>
+  </head>
+</html>

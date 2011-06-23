@@ -1,0 +1,14 @@
+{
+    "name": "Reddited",
+    "description": "Find out if a url you are visiting was submitted to Reddit.",
+    "version": "0.1",
+    "background_page": "background.html",
+    "icons": {
+        "16": "icon.png"
+    },
+    "permissions": ["tabs", "http://*/*", "https://*/*"],
+    "browser_action": {
+        "default_icon": "icon.png",
+        "default_title": "Check if this page has been submitted to Reddit"
+    }
+}
