@@ -18,12 +18,15 @@
     </script>
   </head>
   <body>
-    <div id="loader"><img src="images/loader.gif" /></div>
-    <div id="results-none" style="display: none;">
+    <div id="loader" style="display: none;"><img src="images/loader.gif" /></div>
+    <div id="results-none" class="reddited-message" style="display: none;">
       Look at you finding new content. This page has not been submitted to reddit. Maybe you should <a class="submit-uri" href="#" target="_blank">submit it</a> yourself. You know you want to.
     </div>
-    <div id="results-error" style="display: none;">
+    <div id="results-error" class="reddited-message" style="display: none;">
       Reddit seems to be having some problems, but, you know, it's reddit so you're probably not that shocked.
+    </div>
+    <div id="results-reddit" class="reddited-message" style="display: none;">
+      I'm gonna go out on a limb and say that since it's on reddit, it's probably already been submitted to reddit.
     </div>
     <div id="results" class="sitetable linklisting" style="display: none;"></div>
   </body>

@@ -12,17 +12,18 @@ function getRedditSubmitURI(uri) {
 
 function getRedditSearchURI(uri) {
     return 'http://www.reddit.com/search'
-        + '?q=' + encodeURIComponent('url:' + uri)
-        + '&sort=top';
+        + '?q=' + encodeURIComponent('url:' + uri);
 }
 
 function sendRedditSearch(uri) {
     chrome.extension.sendRequest({"action": "log", "value": "hello"});
     if (!uri) {
-        $('#loader').hide();
-        $('#results-none').show();
-        return;
+        return $('#results-none').show();
+    } else if (uri.indexOf('http://www.reddit.com/r/') == 0) {
+        return $('#results-reddit').show();
     }
+
+    $('#loader').show();
     chrome.extension.sendRequest(
         {"action": "get", "url": getRedditSearchURI(uri)}, parseRedditResponse);
 }

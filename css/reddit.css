@@ -3,11 +3,11 @@ body {
   overflow-x:hidden;
 }
 
-#results, #results-none, #results-error, #loader {
+#results, #loader, .reddited-message {
   width: 350px;
-  padding: 5px 0px 5px 0px;
+  padding: 10px 0px;
 }
-#results-none, #results-error { font-size: small; padding: 5px; }
+.reddited-message { font-size: small; padding: 10px; }
 
 #loader { height: 50px; }
 #loader img { display: block; margin: 17px auto 0px auto; width: 128px; height: 15px; }
