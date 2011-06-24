@@ -1,0 +1,79 @@
+<html>
+  <head>
+    <title>Reddited Extension Options</title>
+    <script type="text/javascript">
+
+    </script>
+    <style type="text/css">
+body { cursor: default; font-size: 13px; background-color:white; color:black; margin:10px; font-family: Arial, sans-serif; }
+a:link { color: rgb(63, 110, 194); }
+a:active { color: rgb(37, 64, 113); }
+#sidebar { -webkit-border-end: 1px solid #c6c9ce; background: -webkit-linear-gradient(rgba(234, 238, 243, 0.2), #eaeef3), -webkit-linear-gradient(left, #eaeef3, #eaeef3 97%, #d3d7db); position: fixed; bottom: 0; top: 0; left: 0; right 0; width: 216px; }
+#sidebar h1 { -webkit-padding-end: 24px; -webkit-user-select: none; color: #53637d; cursor: pointer; font-size: 200%; font-weight: normal; margin: 0; padding-bottom: 14px; padding-top: 13px; text-align: end; text-shadow: white 0 1px 2px; background: url(images/icon48.png) 5 0 no-repeat; }
+#main { -webkit-box-align: stretch; -webkit-padding-start: 216px; margin: 0; position: absolute; left: 0; right: 0; top: 0; bottom: 0; }
+#content { box-sizing: border-box; max-width: 888px; min-width: 600px; padding: 0 24px; }
+.page h1 { -webkit-padding-end: 24px; -webkit-user-select: none; border-bottom: 1px solid #eeeeee; color: #53637d; font-size: 200%; font-weight: normal; margin: 0; padding-bottom: 4px; padding-top: 13px; text-shadow: white 0 1px 2px; }
+.subpage-sheet .page h1 { margin-bottom: 10px; }
+.overlay .page h1 { background: -webkit-linear-gradient(white, #f8f8f8); border-bottom: 1px solid rgba(188, 193, 208, .5); font-size: 105%; font-weight: bold; padding: 10px 15px 8px 15px; }
+.page list { /* Min height is a multiple of the list item height (32) */ min-height: 192px; }
+section { -webkit-box-orient: horizontal; border-bottom: 1px solid #eeeeee; display: -webkit-box; margin-top: 17px; padding-bottom: 20px; }
+div.page section:last-child { border-bottom: none; }
+div.page > h3 { font-size: 105%; font-weight: bold; margin: 20px 0 10px 0; }
+section > h3 { font-size: 105%; font-weight: bold; margin: 0; vertical-align: middle; width: 140px; }
+section > div:only-of-type { -webkit-box-flex: 1; }
+.option { margin-top: 0; }
+div.checkbox, div.radio { margin: 5px 0; }
+div.group > div { margin-left: 20px; }
+div.group > div:first-child { margin-left: 0px; }
+#auto_check_whitelist { width: 300px; height: 150px; }
+    </style>
+  </head>
+  <body>
+    <div id="sidebar">
+      <h1>Reddited</h1>
+    </div>
+    <div id="main">
+      <div id="content">
+        <div class="page">
+          <h1>Options</h1>
+          <section>
+            <h3>Auto-Check Pages</h3>
+            <div>
+              <div class="radio">
+                <label>
+                  <input type="radio" name="auto_check" id="auto_check" value="never" />
+                  <span>Never</span>
+                </label>
+              </div>
+              <div class="group">
+                <div class="radio">
+                  <label>
+                    <input type="radio" name="auto_check" id="auto_check" value="only-for-whitelist" />
+                    <span>Only for the listed domains (one per line):</span>
+                  </label>
+                </div>
+                <div class="textarea">
+                  <textarea name="auto_check_whitelist" id="auto_check_whitelist"></textarea>
+                </div>
+              </div>
+              <div class="group">
+                <div class="radio">
+                  <label>
+                    <input type="radio" name="auto_check" id="auto_check" value="always" />
+                    <span>Always</span>
+                  </label>
+                </div>
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox" name="auto_check_https" id="auto_check_https" />
+                    <span>Even https</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
