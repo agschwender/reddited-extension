@@ -173,7 +173,7 @@ a:focus { -moz-outline-style:none; }
  text-transform:none;
  font-size:medium;
 }
-.rank { overflow:hidden }
+.rank { overflow:hidden; display: none; width: 0px; }
 .link .midcol {font-weight:bold; font-size: small;}
 .link .score.likes   { color:#FF8B60; }
 .link .score.dislikes { color:#9494FF; }

@@ -10,6 +10,12 @@ function getRedditSubmitURI(uri) {
     return 'http://www.reddit.com/submit?url=' + encodeURIComponent(uri);
 }
 
+function getRedditSearchURI(uri) {
+    return 'http://www.reddit.com/search'
+        + '?q=' + encodeURIComponent('url:' + uri)
+        + '&sort=top';
+}
+
 function sendRedditSearch(uri) {
     chrome.extension.sendRequest({"action": "log", "value": "hello"});
     if (!uri) {
@@ -18,7 +24,7 @@ function sendRedditSearch(uri) {
         return;
     }
     chrome.extension.sendRequest(
-        {"action": "get", "url": getRedditSubmitURI(uri)}, parseRedditResponse);
+        {"action": "get", "url": getRedditSearchURI(uri)}, parseRedditResponse);
 }
 
 function parseRedditResponse(response) {
