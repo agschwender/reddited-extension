@@ -1,8 +1,67 @@
 <html>
   <head>
     <title>Reddited Extension Options</title>
+    <script type="text/javascript" src="js/jquery-1.6.1.min.js"></script>
+    <script type="text/javascript" src="js/options.js"></script>
     <script type="text/javascript">
+function loadFromStorage(storage) {
+    $('input[name=auto_check]').each(function() {
+        if ($(this).val() == storage.get_auto_check()) {
+            $(this).attr('checked', 'checked');
+        } else {
+            $(this).removeAttr('checked');
+        }
+    });
+    $('#auto_check_whitelist').val(
+        storage.get_auto_check_whitelist().join("\n"));
+    $('#auto_check_whitelist_customized').val(
+        storage.get_auto_check_whitelist_customized());
+    if (storage.get_auto_check_whitelist_customized()) {
+        $('#customize_links span.yes').hide();
+        $('#customize_links span.no').show();
+        $('#auto_check_whitelist').removeAttr('readonly');
+    } else {
+        $('#customize_links span.no').hide();
+        $('#customize_links span.yes').show();
+        $('#auto_check_whitelist').attr('readonly', 'readonly');
+    }
+    if (storage.get_auto_check_https()) {
+        $('#auto_check_https').attr('checked', 'checked');
+    } else {
+        $('#auto_check_https').removeAttr('checked');
+    }
+};
 
+$(document).ready(function() {
+    $(document).bind(
+        'reddited-storage-loaded',
+        function(event, storage) { loadFromStorage(storage); }
+    );
+    $(document).bind(
+        'reddited-storage-saved',
+        function(event, storage) { loadFromStorage(storage); }
+    );
+
+    var storage = new Reddited.Storage();
+    $('input[name=auto_check]').change(function() {
+        storage.set_auto_check($(this).val()).save();
+    });
+    var f = function() {
+        storage.set_auto_check_whitelist($(this).val()).save();
+    };
+    $('#auto_check_whitelist').change(f).blur(f).keyup(f);
+    $('#auto_check_whitelist_customized').change(function() {
+        storage.set_auto_check_whitelist_customized(
+           $(this).is(':checked')).save();
+    });
+    $('#customize_links a').click(function() {
+        storage.set_auto_check_whitelist_customized(
+            !storage.get_auto_check_whitelist_customized()).save();
+    });
+    $('#auto_check_https').change(function() {
+        storage.set_auto_check_https($(this).is(':checked')).save();
+    });
+});
     </script>
     <style type="text/css">
 body { cursor: default; font-size: 13px; background-color:white; color:black; margin:10px; font-family: Arial, sans-serif; }
@@ -26,6 +85,9 @@ div.checkbox, div.radio { margin: 5px 0; }
 div.group > div { margin-left: 20px; }
 div.group > div:first-child { margin-left: 0px; }
 #auto_check_whitelist { width: 300px; height: 150px; }
+#auto_check_whitelist[readonly] { background: lightgrey; }
+#customize_links { margin-top: 5px; width: 300px; height: 15px; position: relative; }
+#customize_links a { position: absolute; right: 0px; }
     </style>
   </head>
   <body>
@@ -41,25 +103,29 @@ div.group > div:first-child { margin-left: 0px; }
             <div>
               <div class="radio">
                 <label>
-                  <input type="radio" name="auto_check" id="auto_check" value="never" />
+                  <input type="radio" name="auto_check" value="never" />
                   <span>Never</span>
                 </label>
               </div>
               <div class="group">
                 <div class="radio">
                   <label>
-                    <input type="radio" name="auto_check" id="auto_check" value="only-for-whitelist" />
+                    <input type="radio" name="auto_check" value="whitelist" />
                     <span>Only for the listed domains (one per line):</span>
                   </label>
                 </div>
                 <div class="textarea">
-                  <textarea name="auto_check_whitelist" id="auto_check_whitelist"></textarea>
+                  <textarea name="auto_check_whitelist" id="auto_check_whitelist" readonly="readonly"></textarea>
+                  <div id="customize_links">
+                    <input type="hidden" name="auto_check_whitelist_customized" id="auto_check_whitelist_customized" />
+                    <a href="#"><span class="yes">Customize Domains</span><span class="no" style="display: none;">Restore Original</span></a>
+                  </div>
                 </div>
               </div>
               <div class="group">
                 <div class="radio">
                   <label>
-                    <input type="radio" name="auto_check" id="auto_check" value="always" />
+                    <input type="radio" name="auto_check" value="always" />
                     <span>Always</span>
                   </label>
                 </div>
