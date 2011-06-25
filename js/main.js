@@ -113,10 +113,6 @@ Reddited.Storage.prototype.set_auto_check = function(v) {
 };
 
 Reddited.Storage.prototype.get_auto_check = function() {
-    if (this._auto_check == 'whitelist' &&
-        this._auto_check_whitelist == false) {
-        return 'never';
-    }
     return this._auto_check;
 };
 
@@ -137,8 +133,11 @@ Reddited.Storage.prototype.set_auto_check_whitelist = function(v) {
     return this;
 };
 
-Reddited.Storage.prototype.get_auto_check_whitelist = function() {
+Reddited.Storage.prototype.get_auto_check_whitelist = function(required) {
     if (!this._auto_check_whitelist_customized) {
+        return Reddited.Storage.DEFAULT_AUTO_CHECK_WHITELIST;
+    }
+    if (required && this._auto_check_whitelist == false) {
         return Reddited.Storage.DEFAULT_AUTO_CHECK_WHITELIST;
     }
     return this._auto_check_whitelist;
@@ -247,7 +246,7 @@ Reddited.Finder.prototype.should_auto_check = function(uri) {
         return false;
     }
 
-    var whitelist = this._storage.get_auto_check_whitelist();
+    var whitelist = this._storage.get_auto_check_whitelist(true);
     for (var i = 0; i < whitelist.length; i++) {
         if (whitelist[i].length > host.length) {
             continue;
