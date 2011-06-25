@@ -4,14 +4,6 @@
     <script type="text/javascript" src="js/jquery-1.6.1.min.js"></script>
     <script type="text/javascript" src="js/main.js"></script>
     <script>
-      $.ajaxPrefilter(function(opts, origopts, jqXHR) {
-          if (opts.url.indexOf('/') == 0) {
-              opts.url = 'http://www.reddit.com' + opts.url;
-          } else if (opts.url.indexOf('://') == -1) {
-              opts.url = 'http://www.reddit.com/' + opts.url;
-          }
-      });
-
       $(document).ready(function() {
           var cache = chrome.extension.getBackgroundPage().cache;
           var finder = new Reddited.Finder(cache);
@@ -77,6 +69,17 @@
                   $('.submit-uri').each(function() {
                       $(this).attr(
                           'href', Reddited.get_reddit_submit_uri(tab.url));
+                  });
+
+                  $.ajaxPrefilter(function(opts, origopts, jqXHR) {
+                      if (opts.url.indexOf('/') == 0) {
+                          opts.url = 'http://www.reddit.com' + opts.url;
+                      } else if (opts.url.indexOf('://') == -1) {
+                          opts.url = 'http://www.reddit.com/' + opts.url;
+                      }
+                      if (opts.url.indexOf('reddit.com/api') >= 0) {
+                          cache.remove(tab.url);
+                      }
                   });
               }
           );
