@@ -2,15 +2,81 @@
   <head>
     <link rel="stylesheet" href="css/reddit.css" />
     <script type="text/javascript" src="js/jquery-1.6.1.min.js"></script>
-    <script type="text/javascript" src="js/script.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
     <script>
+      $.ajaxPrefilter(function(opts, origopts, jqXHR) {
+          if (opts.url.indexOf('/') == 0) {
+              opts.url = 'http://www.reddit.com' + opts.url;
+          } else if (opts.url.indexOf('://') == -1) {
+              opts.url = 'http://www.reddit.com/' + opts.url;
+          }
+      });
+
       $(document).ready(function() {
+          var cache = chrome.extension.getBackgroundPage().cache;
+          var finder = new Reddited.Finder(cache);
+
+          finder.onRequesting = function() { $('#loader').show(); };
+          finder.onRequestError = function(type) {
+              $('#loader').hide();
+              if (type == Reddited.Finder.REQUEST_ERROR_EMPTY) {
+                  return $('#results-none').show();
+              } else if (type == Reddited.Finder.REQUEST_ERROR_REDDIT) {
+                  return $('#results-reddit').show();
+              }
+              return $('#results-error').show();
+          };
+
+          finder.onRequestSuccess = function(obj) {
+              $('#loader').hide();
+              if (!obj.num_results) {
+                  return $('#results-none').show();
+              }
+
+              var siteTable = $('#siteTable', obj.source);
+              var results = $(siteTable).children('.thing');
+
+              var re = /<script[^>]+>(\s*(var )?reddit([ =\.]).*?)<\/script>/g;
+              var match;
+              while (match = re.exec(obj.source)) {
+                  $('body').append(
+                      '<scr' + 'ipt type="text/javascript">'
+                      + match[1]
+                      + '</scr' + 'ipt>');
+              }
+
+              // include reddit.js after reddit config values have been
+              // initialized
+              $('body').append(
+                  '<scr' + 'ipt type="text/javascript" src="js/reddit.js">'
+                  + '</scr' + 'ipt>'
+              );
+
+              $('#results').empty().show();
+              for (var i = 0; i < Math.min(5, results.length); i++) {
+                  $('a', results[i]).attr('target', '_new');
+                  $('a.title, a.thumbnail', results[i]).attr(
+                      'href', $('a.comments', results[i]).attr('href'));
+                  $('img', results[i]).each(function() {
+                      if ($(this).attr('src') &&
+                          $(this).attr('src').indexOf('://') == -1) {
+                          $(this).attr('src',
+                                       'http://www.reddit.com'
+                                       + $(this).attr('src'));
+                      }
+                  });
+                  $(results[i]).appendTo($('#results'));
+                  $('#results').append('<div class="clearleft" />');
+              };
+          };
+
           chrome.tabs.getSelected(
               null,
               function(tab) {
-                  sendRedditSearch(tab.url);
+                  finder.request_uri_details(tab.url, true);
                   $('.submit-uri').each(function() {
-                      $(this).attr('href', getRedditSubmitURI(tab.url));
+                      $(this).attr(
+                          'href', Reddited.get_reddit_submit_uri(tab.url));
                   });
               }
           );
@@ -31,4 +97,3 @@
     <div id="results" class="sitetable linklisting" style="display: none;"></div>
   </body>
 </html>
-

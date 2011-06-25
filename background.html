@@ -1,27 +1,42 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <script type="text/javascript" src="js/jquery-1.6.1.min.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
     <script>
-function xhrCall(url, callback) {
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", url, true);
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState == 4) {
-            callback({"content": xhr.responseText, "status": xhr.status});
-        }
-    }
-    xhr.send();
+var cache = new Reddited.Cache();
+
+function on_tab_changed(tab) {
+    var finder = new Reddited.Finder(cache);
+    finder.onRequestSuccess = function(obj) {
+        set_badge(tab, obj.num_results);
+    };
+    finder.request_uri_details(tab.url);
 }
 
-chrome.extension.onRequest.addListener(
-    function(request, sender, callback) {
-        if (request.action == "get") {
-            xhrCall(request.url, callback);
-        } else if (request.action == "log") {
-            console.log(request.value);
-        }
+function set_badge(tab, num_results) {
+    var color = [0, 230, 0, 255];
+    var text = '' + num_results;
+    if (num_results == 0) {
+        color = [51, 102, 153, 255];
+    } else if (num_results > 5) {
+        text = '5+';
     }
-);
+    chrome.browserAction.setBadgeBackgroundColor(
+        {'color': color, 'tabId': tab.id});
+    chrome.browserAction.setBadgeText({'text': text, 'tabId': tab.id});
+};
+
+chrome.tabs.onUpdated.addListener(function(id, info, tab) {
+    if (info.status == "loading") {
+        on_tab_changed(tab);
+    }
+});
+
+chrome.tabs.onSelectionChanged.addListener(function() {
+    chrome.tabs.getSelected(null, function(tab) { on_tab_changed(tab); });
+});
+
     </script>
   </head>
 </html>
