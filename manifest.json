@@ -1,7 +1,7 @@
 {
     "name": "Reddited",
     "description": "Find out if the page you are visiting has been submitted to Reddit.",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "background_page": "background.html",
     "icons": {
         "16": "images/icon48.png",
