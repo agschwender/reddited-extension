@@ -12,6 +12,8 @@ body {
 #loader { height: 50px; }
 #loader img { display: block; margin: 17px auto 0px auto; width: 128px; height: 15px; }
 
+#view-more { padding-left: 10px; }
+
 /**
  * Copied from reddit css file
  */
@@ -137,6 +139,7 @@ a:focus { -moz-outline-style:none; }
 .thing .title.loggedin.click { color:#551a8b }
 .thing .title.loggedin.click:visited { color:#551a8b }
 .sitetable { list-style-type:none; }
+.nextprev { color:gray; font-size: larger; margin-top: 10px;}
 .odd { }
 .even { }
 .entry .buttons li {

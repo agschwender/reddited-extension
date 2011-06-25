@@ -44,7 +44,10 @@
                   + '</scr' + 'ipt>'
               );
 
-              $('#results').empty().show();
+              var e = $('#results');
+              $('.content', e).empty();
+              $('.view-more', e).hide();
+              e.show();
               for (var i = 0; i < Math.min(5, results.length); i++) {
                   $('a', results[i]).attr('target', '_new');
                   $('a.title, a.thumbnail', results[i]).attr(
@@ -57,9 +60,13 @@
                                        + $(this).attr('src'));
                       }
                   });
-                  $(results[i]).appendTo($('#results'));
-                  $('#results').append('<div class="clearleft" />');
+                  $(results[i]).appendTo($('.content', e));
+                  $('<div class="clearleft" />').appendTo($('.content', e));
               };
+
+              if (results.length > 5) {
+                  $('#view-more', e).show();
+              }
           };
 
           chrome.tabs.getSelected(
@@ -70,6 +77,9 @@
                       $(this).attr(
                           'href', Reddited.get_reddit_submit_uri(tab.url));
                   });
+                  $('#view-more a').attr(
+                      'href', Reddited.get_reddit_search_uri(tab.url));
+
 
                   $.ajaxPrefilter(function(opts, origopts, jqXHR) {
                       if (opts.url.indexOf('/') == 0) {
@@ -97,6 +107,13 @@
     <div id="results-reddit" class="reddited-message" style="display: none;">
       I'm gonna go out on a limb and say that since it's on reddit, it's probably already been submitted to reddit.
     </div>
-    <div id="results" class="sitetable linklisting" style="display: none;"></div>
+    <div id="results" class="sitetable linklisting" style="display: none;">
+      <div class="content"></div>
+      <div id="view-more" style="display: none;">
+        <p class="nextprev">
+          view more: <a href="#" target="_blank">next</a>
+        </p>
+      </div>
+    </div>
   </body>
 </html>
