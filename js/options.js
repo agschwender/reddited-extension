@@ -63,7 +63,8 @@ Reddited.Storage.prototype.set_auto_check = function(v) {
 };
 
 Reddited.Storage.prototype.get_auto_check = function() {
-    if (this._auto_check == 'whitelist' && !this._auto_check_whitelist) {
+    if (this._auto_check == 'whitelist' &&
+        this._auto_check_whitelist == false) {
         return 'never';
     }
     return this._auto_check;
