@@ -58,6 +58,12 @@ chrome.tabs.onSelectionChanged.addListener(function() {
     });
 });
 
+chrome.tabs.onRemoved.addListener(function(id, info) {
+    if (tab_url_map[id]) {
+        delete tab_url_map[id];
+    }
+});
+
 chrome.extension.onRequest.addListener(function(request, sender, callback) {
     if (request.action == "log") {
         console.log(request.value);
