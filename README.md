@@ -13,6 +13,5 @@ Click the Reddited extension button on any page and the extension will search fo
 
 ###  UPCOMING FEATURES
 
-*  More prominent post link
 *  Add repost link to listing
 

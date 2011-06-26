@@ -12,7 +12,8 @@ body {
 #loader { height: 50px; }
 #loader img { display: block; margin: 17px auto 0px auto; width: 128px; height: 15px; }
 
-#view-more { padding-left: 10px; }
+#view-more { margin-left: 10px; }
+#results-none .morelink {  margin-top: 5px; }
 
 /**
  * Copied from reddit css file
@@ -49,6 +50,48 @@ a:focus { -moz-outline-style:none; }
  -webkit-border-top-right-radius:6px;
  border-top-right-radius:6px;
  -moz-border-radius-topright:6px;
+}
+
+.morelink {
+ display:block;
+ text-align:center;
+ position:relative;
+ -moz-border-radius-topleft:6px;
+ -moz-border-radius-bottomleft:6px;
+ border:1px solid #c4dbf1;
+ background:white none repeat-x scroll center left;
+ background-image:url(/images/gradient-button.png);
+ font-size:110%;
+ font-weight:bold;
+ letter-spacing:-1px;
+ line-height:29px;
+ height:29px;
+}
+.morelink:hover {
+ border-color:#879eb4;
+ background-image:url(/images/gradient-button-hover.png);
+}
+.morelink a {
+ display:block;
+ width:100%;
+ color:#369;
+}
+.morelink:hover a {
+ color:white;
+}
+.morelink .nub {
+ position:absolute;
+ top:-1px;
+ right:-1px;
+ height:31px;
+ width:24px;
+ background:white none no-repeat scroll center left;
+ background-image:url(/images/sprite.png);
+ background-position:-4px -4px;
+}
+.morelink:hover .nub {
+ background-image:url(/images/sprite.png);
+ background-position:-4px -43px;
 }
 
 .hover a:hover { text-decoration:underline }
