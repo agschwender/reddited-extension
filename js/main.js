@@ -6,7 +6,9 @@ Reddited.get_reddit_submit_uri = function(uri) {
 
 Reddited.get_reddit_search_uri = function(uri) {
     // TODO: replace with json web service
-    return 'http://www.reddit.com/search?q=' + encodeURIComponent('url:' + uri);
+    return 'http://www.reddit.com/search'
+        + '?q=' + encodeURIComponent('url:' + uri)
+        + '&src=reddited-extension';
 };
 
 Reddited.relative_uri_to_absolute = function(relative, base) {
