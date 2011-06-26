@@ -1,18 +1,18 @@
 {
     "name": "Reddited",
     "description": "Find out if the page you are visiting has been submitted to Reddit.",
-    "version": "1.0.2",
+    "version": "1.1.0",
     "background_page": "background.html",
+    "options_page": "options.html",
     "icons": {
         "16": "images/icon48.png",
         "48": "images/icon48.png",
         "128": "images/icon128.png"
     },
-    "permissions": ["tabs", "http://www.reddit.com/", "http://api.reddit.com/"],
+    "permissions": ["tabs", "http://*/*", "http://*/*"],
     "browser_action": {
         "default_icon": "images/icon48.png",
         "default_title": "Check if this page has been submitted to Reddit",
         "popup": "popup.html"
-    },
-    "options_page": "options.html"
+    }
 }

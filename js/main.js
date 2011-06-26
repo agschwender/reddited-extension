@@ -9,6 +9,29 @@ Reddited.get_reddit_search_uri = function(uri) {
     return 'http://www.reddit.com/search?q=' + encodeURIComponent('url:' + uri);
 };
 
+Reddited.relative_uri_to_absolute = function(relative, base) {
+    if (!$.trim(relative)) {
+        return base;
+    }
+
+    var o = $.url(relative);
+    if (o.attr('protocol')) {
+        return relative;
+    }
+
+    o = $.url(base);
+    if (relative.indexOf('/') == 0) {
+        return base.substr(0, base.indexOf(o.attr('path'))) + relative;
+    }
+
+    var absolute = o.attr('directory');
+    while (/^\.\./.test(relative)){
+	absolute = absolute.substring(0, absolute.lastIndexOf('/'));
+	relative = relative.substring(3);
+    }
+    return absolute;
+};
+
 Reddited.Cache = function() {
     this._cache = {};
     setInterval($.proxy(this.purge_stale, this),
@@ -219,12 +242,16 @@ Reddited.Finder.prototype.request_uri_details = function(uri, force) {
 
     var obj = this._cache.get(uri);
     if (obj) {
+        chrome.extension.sendRequest(
+            {"action": "log", "value": "reddited: using cache"});
         return this.onRequestSuccess(obj);
     }
 
+    chrome.extension.sendRequest(
+        {"action": "log", "value": "reddited: making request"});
     this.onRequesting();
     var f = $.proxy(this._handle_response, this);
-    $.ajax(Reddited.get_reddit_search_uri(uri),
+    $.ajax(Reddited.get_reddit_search_uri(uri.replace(/\#.*$/, '')),
            {'cache': true,
             'success': function(data, ts, jqXHR) { f(uri, data, jqXHR); },
             'error': function(jqXHR) { f(uri, null, jqXHR); }});
