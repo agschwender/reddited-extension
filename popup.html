@@ -52,8 +52,6 @@
               e.show();
               for (var i = 0; i < Math.min(5, results.length); i++) {
                   $('a', results[i]).attr('target', '_new');
-                  $('a.title, a.thumbnail', results[i]).attr(
-                      'href', $('a.comments', results[i]).attr('href'));
                   $('img', results[i]).each(function() {
                       if ($(this).attr('src') &&
                           $(this).attr('src').indexOf('://') == -1) {
