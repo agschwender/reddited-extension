@@ -5,25 +5,30 @@
     <script type="text/javascript" src="js/main.js"></script>
     <script>
 var cache = new Reddited.Cache();
-var tab_url_map = {};
+var pages = {};
 
-function get_tab_search_url(tab) {
-    var url_map = tab_url_map[tab.id] || {};
-    var canonical_url;
-    if (url_map.url == tab.url && url_map.canonical_url) {
-        canonical_url = Reddited.relative_uri_to_absolute(
-            url_map.canonical_url, tab.url);
+function get_tab_search_uri(tab) {
+    if (pages[tab.id] && pages[tab.id].uri == tab.url) {
+        return pages[tab.id].get_preferred_uri();
     }
-    return (canonical_url || tab.url);
-}
+    return tab.url;
+};
 
 function on_tab_changed(tab) {
+    if (tab.url.indexOf("http://") == 0) {
+        chrome.tabs.executeScript(tab.id, {"file": "js/content.js"});
+    } else {
+        on_tab_ready(tab);
+    }
+};
+
+function on_tab_ready(tab) {
     var finder = new Reddited.Finder(cache);
     finder.onRequestSuccess = function(obj) {
         set_badge(tab, obj.num_results);
     };
-    finder.request_uri_details(get_tab_search_url(tab));
-}
+    finder.request_uri_details(get_tab_search_uri(tab));
+};
 
 function set_badge(tab, num_results) {
     var color = [0, 230, 0, 255];
@@ -39,29 +44,15 @@ function set_badge(tab, num_results) {
 };
 
 chrome.tabs.onUpdated.addListener(function(id, info, tab) {
-    if (info.status == "loading") {
-        if (tab.url.indexOf("http://") == 0) {
-            chrome.tabs.executeScript(tab.id, {"file": "js/content.js"});
-        } else {
-            on_tab_changed(tab);
-        }
-    }
+    if (info.status == "loading") { on_tab_changed(tab); }
 });
 
 chrome.tabs.onSelectionChanged.addListener(function() {
-    chrome.tabs.getSelected(null, function(tab) {
-        if (tab.url.indexOf("http://") == 0) {
-            chrome.tabs.executeScript(tab.id, {"file": "js/content.js"});
-        } else {
-            on_tab_changed(tab);
-        }
-    });
+    chrome.tabs.getSelected(null, function(tab) { on_tab_changed(tab); });
 });
 
 chrome.tabs.onRemoved.addListener(function(id, info) {
-    if (tab_url_map[id]) {
-        delete tab_url_map[id];
-    }
+    if (pages[id]) { delete pages[id]; }
 });
 
 chrome.extension.onRequest.addListener(function(request, sender, callback) {
@@ -69,13 +60,12 @@ chrome.extension.onRequest.addListener(function(request, sender, callback) {
         console.log(request.value);
         callback({});
     } else if (request.action == "content-ready") {
-        tab_url_map[sender.tab.id] = {"url": sender.tab.url,
-                                      "canonical_url": request.canonical};
-        on_tab_changed(sender.tab);
+        pages[sender.tab.id] = new Reddited.Page(
+            sender.tab.url, {'canonical_uri': request.canonical});
+        on_tab_ready(sender.tab);
         callback({});
     }
 });
-
     </script>
   </head>
   <body></body>

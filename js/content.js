@@ -1,4 +1,4 @@
-function get_canonical_uri() {
+function reddited_get_canonical_uri() {
     var heads = document.getElementsByTagName('head')
     if (!heads.length) { return; }
 
@@ -29,10 +29,10 @@ function get_canonical_uri() {
     throw "no canonical uri";
 }
 
-function do_content_changed() {
+function reddited_do_content_changed() {
     var canonical;
     try {
-        canonical = get_canonical_uri();
+        canonical = reddited_get_canonical_uri();
     } catch (err) {
         // ignore
     }
@@ -40,4 +40,4 @@ function do_content_changed() {
                                   "canonical": canonical});
 }
 
-do_content_changed();
+reddited_do_content_changed();

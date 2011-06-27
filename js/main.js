@@ -11,7 +11,12 @@ Reddited.get_reddit_search_uri = function(uri) {
         + '&src=reddited-extension';
 };
 
-Reddited.relative_uri_to_absolute = function(relative, base) {
+Reddited.Page = function(uri, meta) {
+    this.uri = uri;
+    this.canonical_uri = $.trim(meta.canonical_uri || '');
+};
+
+Reddited.Page.prototype._relative_uri_to_absolute = function(relative, base) {
     if (!$.trim(relative)) {
         return base;
     }
@@ -20,7 +25,6 @@ Reddited.relative_uri_to_absolute = function(relative, base) {
     if (o.attr('protocol')) {
         return relative;
     }
-
     o = $.url(base);
     if (relative.indexOf('/') == 0) {
         return base.substr(0, base.indexOf(o.attr('path'))) + relative;
@@ -32,6 +36,27 @@ Reddited.relative_uri_to_absolute = function(relative, base) {
 	relative = relative.substring(3);
     }
     return absolute;
+};
+
+Reddited.Page.prototype._are_uris_similar = function(a, b) {
+    var m = $.url(a);
+    var n = $.url(b);
+    if (m.attr('host') != n.attr('host')) {
+        return false;
+    } else if (m.attr('path') != n.attr('path')) {
+        return false;
+    }
+    return true;
+};
+
+Reddited.Page.prototype.get_preferred_uri = function() {
+    if (!this.canonical_uri) { return this.uri; }
+    var preferred_uri = this._relative_uri_to_absolute(
+        this.canonical_uri, this.uri);
+    if (!this._are_uris_similar(preferred_uri, this.uri)) {
+        return this.uri;
+    }
+    return preferred_uri;
 };
 
 Reddited.Cache = function() {

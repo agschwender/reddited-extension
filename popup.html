@@ -7,7 +7,7 @@
       $(document).ready(function() {
           var background_page = chrome.extension.getBackgroundPage();
           var cache = background_page.cache;
-          var get_tab_search_url = background_page.get_tab_search_url;
+          var get_tab_search_uri = background_page.get_tab_search_uri;
           var finder = new Reddited.Finder(cache);
 
           finder.onRequesting = function() { $('#loader').show(); };
@@ -72,7 +72,7 @@
           chrome.tabs.getSelected(
               null,
               function(tab) {
-                  finder.request_uri_details(get_tab_search_url(tab), true);
+                  finder.request_uri_details(get_tab_search_uri(tab), true);
                   $('.submit-uri').each(function() {
                       $(this).attr(
                           'href', Reddited.get_reddit_submit_uri(tab.url));
