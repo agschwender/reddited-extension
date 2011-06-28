@@ -65,8 +65,8 @@ Reddited.Cache = function() {
                 Reddited.Cache.PURGE_FREQUENCY);
 };
 
-Reddited.Cache.DEFAULT_TTL = 1800000; // 30 * 60 * 1000
-Reddited.Cache.PURGE_FREQUENCY = 300000; // 5 * 60 * 1000
+Reddited.Cache.DEFAULT_TTL = 300000; // 5 * 60 * 1000
+Reddited.Cache.PURGE_FREQUENCY = 60000; // 60 * 1000
 
 Reddited.Cache.prototype.set = function(key, value, ttl) {
     var now = new Date();
@@ -234,17 +234,17 @@ Reddited.Finder.REQUEST_ERROR_BAD_RESPONSE = 'bad';
 
 Reddited.Finder.prototype._parse_response = function(response) {
     if (!response) {
-        return {'num_results': 0, 'source': null};
+        return {'count': 0, 'source': null};
     }
 
     // TODO: replace with json web service
     var siteTable = $('#siteTable', response);
     var results = $(siteTable).children('.thing');
     if (results.length == 0) {
-        return {'num_results': 0, 'source': null};
+        return {'count': 0, 'source': null};
     }
 
-    return {'num_results': results.length, 'source': response};
+    return {'count': results.length, 'source': response};
 };
 
 Reddited.Finder.prototype._handle_response = function(uri, response, xhr) {
@@ -256,26 +256,25 @@ Reddited.Finder.prototype._handle_response = function(uri, response, xhr) {
     this.onRequestSuccess(obj);
 };
 
-Reddited.Finder.prototype.request_uri_details = function(uri, force) {
+Reddited.Finder.prototype.request_uri_details = function(uri, opts) {
+    opts = opts || {}
     if (!uri) {
         return this.onRequestError(Reddited.Finder.REQUEST_ERROR_EMPTY);
     } else if (uri.indexOf('http://www.reddit.com/r/') == 0) {
         return this.onRequestError(Reddited.Finder.REQUEST_ERROR_REDDIT);
     }
 
-    if (!force && !this.should_auto_check(uri)) {
+    if (!opts.force && !this.should_auto_check(uri)) {
         return this.onRequestIgnored();
     }
 
     var obj = this._cache.get(uri);
-    if (obj) {
-        chrome.extension.sendRequest(
-            {"action": "log", "value": "reddited: using cache"});
+    if (obj && !(opts.require_source && obj.count_only)) {
+        console.log('reddited: using cache');
         return this.onRequestSuccess(obj);
     }
 
-    chrome.extension.sendRequest(
-        {"action": "log", "value": "reddited: making request"});
+    console.log('reddited: making request');
     this.onRequesting();
     var f = $.proxy(this._handle_response, this);
     $.ajax(Reddited.get_reddit_search_uri(uri.replace(/\#.*$/, '')),

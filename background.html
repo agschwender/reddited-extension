@@ -15,8 +15,8 @@ function get_tab_search_uri(tab) {
 };
 
 function on_tab_changed(tab) {
-    if (tab.url.indexOf("http://") == 0) {
-        chrome.tabs.executeScript(tab.id, {"file": "js/content.js"});
+    if (tab.url.indexOf('http://') == 0) {
+        chrome.tabs.executeScript(tab.id, {'file': 'js/content.js'});
     } else {
         on_tab_ready(tab);
     }
@@ -25,17 +25,17 @@ function on_tab_changed(tab) {
 function on_tab_ready(tab) {
     var finder = new Reddited.Finder(cache);
     finder.onRequestSuccess = function(obj) {
-        set_badge(tab, obj.num_results);
+        set_badge(tab, obj.count);
     };
     finder.request_uri_details(get_tab_search_uri(tab));
 };
 
-function set_badge(tab, num_results) {
+function set_badge(tab, count) {
     var color = [0, 230, 0, 255];
-    var text = '' + num_results;
-    if (num_results == 0) {
+    var text = '' + count;
+    if (count == 0) {
         color = [51, 102, 153, 255];
-    } else if (num_results > 5) {
+    } else if (count > 5) {
         text = '5+';
     }
     chrome.browserAction.setBadgeBackgroundColor(
@@ -44,7 +44,7 @@ function set_badge(tab, num_results) {
 };
 
 chrome.tabs.onUpdated.addListener(function(id, info, tab) {
-    if (info.status == "loading") { on_tab_changed(tab); }
+    if (info.status == 'loading') { on_tab_changed(tab); }
 });
 
 chrome.tabs.onSelectionChanged.addListener(function() {
@@ -56,15 +56,23 @@ chrome.tabs.onRemoved.addListener(function(id, info) {
 });
 
 chrome.extension.onRequest.addListener(function(request, sender, callback) {
-    if (request.action == "log") {
+    if (request.action == 'log') {
         console.log(request.value);
-        callback({});
-    } else if (request.action == "content-ready") {
+    } else if (request.action == 'content-ready') {
         pages[sender.tab.id] = new Reddited.Page(
             sender.tab.url, {'canonical_uri': request.canonical});
         on_tab_ready(sender.tab);
-        callback({});
+    } else if (request.action == 'proactive-cache') {
+        if (!cache.get(request.uri)) {
+            cache.set(request.uri, {'count': 1, 'count_only': true});
+        }
+    } else if (request.action == 'set-badge') {
+        chrome.tabs.get(request.tabId, function(tab) {
+            set_badge(tab, request.count);
+        });
     }
+    callback({});
+
 });
     </script>
   </head>

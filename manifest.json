@@ -1,7 +1,7 @@
 {
     "name": "Reddited",
     "description": "Find out if the page you are visiting has been submitted to Reddit.",
-    "version": "1.1.6",
+    "version": "1.2.0",
     "background_page": "background.html",
     "options_page": "options.html",
     "icons": {
@@ -14,5 +14,9 @@
         "default_icon": "images/icon48.png",
         "default_title": "Check if this page has been submitted to Reddit",
         "popup": "popup.html"
-    }
+    },
+    "content_scripts": [{
+        "matches": ["http://www.reddit.com/*"],
+        "js": ["js/jquery-1.6.1.min.js", "js/reddit_content.js"]
+    }]
 }
