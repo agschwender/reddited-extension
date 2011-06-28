@@ -88,6 +88,7 @@
                   $('.submit-uri').each(function() {
                       $(this).attr(
                           'href', Reddited.get_reddit_submit_uri(tab.url));
+                      $(this).click(function() { cache.remove(tab.url); });
                   });
                   $('#view-more a').attr(
                       'href', Reddited.get_reddit_search_uri(tab.url));
