@@ -5,9 +5,9 @@ Reddited.get_reddit_submit_uri = function(uri) {
 };
 
 Reddited.get_reddit_search_uri = function(uri) {
-    // TODO: replace with json web service
-    return 'http://www.reddit.com/search'
-        + '?q=' + encodeURIComponent('url:' + uri)
+    return 'http://www.reddit.com/api/info.json'
+        + '?url=' + encodeURIComponent(uri)
+        + '&sort=relevance'
         + '&src=reddited-extension';
 };
 
@@ -232,26 +232,31 @@ Reddited.Finder.REQUEST_ERROR_EMPTY = 'empty';
 Reddited.Finder.REQUEST_ERROR_REDDIT = 'reddit';
 Reddited.Finder.REQUEST_ERROR_BAD_RESPONSE = 'bad';
 
-Reddited.Finder.prototype._parse_response = function(response) {
-    if (!response) {
-        return {'count': 0, 'source': null};
+Reddited.Finder.prototype._parse_response = function(o) {
+    if (!o) {
+        throw 'empty response';
     }
 
-    // TODO: replace with json web service
-    var siteTable = $('#siteTable', response);
-    var results = $(siteTable).children('.thing');
-    if (results.length == 0) {
-        return {'count': 0, 'source': null};
+    o.kind = o.kind || '';
+    if (o.kind.toLowerCase() != 'listing' || !o.data) {
+        throw 'invalid response';
     }
 
-    return {'count': results.length, 'source': response};
+    o.data.children = o.data.children || [];
+    return {'count': o.data.children.length, 'results': o.data.children};
 };
 
 Reddited.Finder.prototype._handle_response = function(uri, response, xhr) {
     if (!xhr.status || xhr.status >= 400) {
         return this.onRequestError(Reddited.Finder.REQUEST_ERROR_BAD_RESPONSE);
     }
-    var obj = this._parse_response(response);
+    var obj;
+    try {
+        obj = this._parse_response(response);
+    } catch (err) {
+        console.log(err);
+        return this.onRequestError(Reddited.Finder.REQUEST_ERROR_BAD_RESPONSE);
+    }
     this._cache.set(uri, obj);
     this.onRequestSuccess(obj);
 };
@@ -269,7 +274,7 @@ Reddited.Finder.prototype.request_uri_details = function(uri, opts) {
     }
 
     var obj = this._cache.get(uri);
-    if (obj && !(opts.require_source && obj.count_only)) {
+    if (obj && !(opts.require_results && obj.count_only)) {
         console.log('reddited: using cache');
         return this.onRequestSuccess(obj);
     }

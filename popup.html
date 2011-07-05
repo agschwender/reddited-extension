@@ -30,40 +30,14 @@
                   return $('#results-none').show();
               }
 
-              var siteTable = $('#siteTable', obj.source);
-              var results = $(siteTable).children('.thing');
-
-              var re = /<script[^>]+>(\s*(var )?reddit([ =\.]).*?)<\/script>/g;
-              var match;
-              while (match = re.exec(obj.source)) {
-                  $('body').append(
-                      '<scr' + 'ipt type="text/javascript">'
-                      + match[1]
-                      + '</scr' + 'ipt>');
-              }
-
-              // include reddit.js after reddit config values have been
-              // initialized
-              $('body').append(
-                  '<scr' + 'ipt type="text/javascript" src="js/reddit.js">'
-                  + '</scr' + 'ipt>'
-              );
-
               var e = $('#results');
               $('.content', e).empty();
               $('.view-more', e).hide();
               e.show();
-              for (var i = 0; i < Math.min(5, results.length); i++) {
-                  $('a', results[i]).attr('target', '_new');
-                  $('img', results[i]).each(function() {
-                      if ($(this).attr('src') &&
-                          $(this).attr('src').indexOf('://') == -1) {
-                          $(this).attr('src',
-                                       'http://www.reddit.com'
-                                       + $(this).attr('src'));
-                      }
-                  });
-                  $(results[i]).appendTo($('.content', e));
+              for (var i = 0; i < Math.min(5, obj.results.length); i++) {
+                  var t = $('#result-template .thing').clone();
+                  $('.debug', t).text(JSON.stringify(obj.results[i]));
+                  $(t).appendTo($('.content', e));
                   $('<div class="clearleft" />').appendTo($('.content', e));
               };
 
@@ -77,7 +51,7 @@
               function(tab) {
                   finder.request_uri_details(get_tab_search_uri(tab),
                                              {'force': true,
-                                              'require_source': true});
+                                              'require_results': true});
                   var f = finder.onRequestSuccess;
                   finder.onRequestSuccess = function(obj) {
                       f(obj);
@@ -130,6 +104,58 @@
         <p class="nextprev">
           view more: <a href="#" target="_blank">next</a>
         </p>
+      </div>
+    </div>
+    <div id="result-template" style="display: none;">
+      <div class=" thing id-t3_ie44o even odd link" onclick="click_thing(this)">
+        <div class="debug"></div>
+        <p class="parent"></p>
+        <span class="rank" style="width:2.20ex;">3</span>
+        <div class="midcol unvoted" style="width:5ex;">
+          <div class="arrow up" onclick="$(this).vote('1a026347099945eb2d4936e1d403dd74752ba4b3', null, event)"></div>
+          <div class="score dislikes">2054</div>
+          <div class="score unvoted">2055</div>
+          <div class="score likes">2056</div>
+          <div class="arrow down" onclick="$(this).vote('1a026347099945eb2d4936e1d403dd74752ba4b3', null, event)"></div>
+        </div>
+        <a class="thumbnail loggedin " href="http://i.imgur.com/39mgd.png" target="_blank">​<img src="http://thumbs.reddit.com/t3_ie44o.png" alt=""></a>
+        <div class="entry unvoted">
+          <p class="title">
+            <a class="title loggedin  click" href="http://i.imgur.com/39mgd.png" target="_blank">Son, I am not disappoint.</a>
+            <span class="domain">(<a href="http://www.reddit.com/domain/i.imgur.com/">i.imgur.com</a>)</span>
+          </p>
+          <p class="tagline">submitted
+            <time title="Fri Jul 1 10:57:09 2011 GMT" datetime="2011-07-01T10:57:09.635212+00:00">8 hours</time> ago by
+            <a href="http://www.reddit.com/user/plasticmouse" class="author id-t2_4wtzj">plasticmouse</a>
+            <span class="userattrs"></span> to
+            <a href="http://www.reddit.com/r/pics/" class="subreddit hover">pics</a>
+            <script type="text/javascript">
+              // reddit.sr['t3_ie44o'] = 't5_2qh0u';
+            </script>
+          </p>
+          <ul class="flat-list buttons">
+            <li class="first">
+              <a class="comments" href="http://www.reddit.com/r/pics/comments/ie44o/son_i_am_not_disappoint/" target="_blank">851 comments</a>
+            </li>
+            <li class="share">
+              <span class="share-button toggle" style="">
+                <a class="option active " href="#" tabindex="100" onclick="return toggle(this, share, cancelShare)">share</a>
+                <a class="option " href="#">cancel</a>
+              </span>
+            </li>
+            <li>
+              <form action="/post/save" method="post" class="state-button save-button">
+                <input type="hidden" name="executed" value="saved" />
+                <span><a href="javascript:void(0)" onclick="return change_state(this, 'save', save_thing);">save</a></span>
+              </form>
+            </li>
+          </ul>
+          <div class="expando" style="display: none">
+            <span class="error">loading...</span>
+          </div>
+        </div>
+        <div class="child"></div>
+        <div class="clearleft"><!--IE6sux--></div>
       </div>
     </div>
   </body>
