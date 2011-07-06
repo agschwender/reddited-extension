@@ -5,8 +5,8 @@ Reddited.get_reddit_submit_uri = function(uri) {
 };
 
 Reddited.get_reddit_search_uri = function(uri) {
-    return 'http://www.reddit.com/api/info.json'
-        + '?url=' + encodeURIComponent(uri)
+    return 'http://www.reddit.com/search.json'
+        + '?q=' + encodeURIComponent('url:' + uri)
         + '&sort=relevance'
         + '&src=reddited-extension';
 };
