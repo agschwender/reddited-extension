@@ -34,9 +34,32 @@
               $('.content', e).empty();
               $('.view-more', e).hide();
               e.show();
-              for (var i = 0; i < Math.min(5, obj.results.length); i++) {
+              for (var i = 0;
+                   i < Math.min(Reddited.MAX_RESULTS, obj.results.length);
+                   i++) {
+                  var r = obj.results[i].data;
                   var t = $('#result-template .thing').clone();
-                  $('.debug', t).text(JSON.stringify(obj.results[i]));
+                  $('.rank', t).text(i);
+                  $('.score.dislikes', t).text(r.downs);
+                  $('.score.unvoted', t).text(r.score);
+                  $('.score.likes', t).text(Math.max(0, r.ups - r.downs));
+                  $('a.title, a.thumbnail', t).attr('href', r.url);
+                  if (r.thumbnail) {
+                      $('.thumbnail img', t).attr('src', r.thumbnail);
+                  } else {
+                      $('.thumbnail', t).hide();
+                  }
+                  $('a.title', t).text(r.title);
+                  $('.domain a')
+                  .attr(
+                       'href',
+                       'http://www.reddit.com/domain/'
+                       + encodeURIComponent(r.domain)
+                       + '/')
+                  .text(r.domain);
+
+
+                  $('.debug', t).text(JSON.stringify(r));
                   $(t).appendTo($('.content', e));
                   $('<div class="clearleft" />').appendTo($('.content', e));
               };
