@@ -2,7 +2,8 @@
   <head>
     <link rel="stylesheet" href="css/reddit.css" />
     <script type="text/javascript" src="js/jquery-1.6.1.min.js"></script>
-    <script type="text/javascript" src="js/main.js"></script>
+    <script type="text/javascript" src="js/date.js"></script>
+    <script type="text/javascript" src="js/main.js?v=4"></script>
     <script>
       console.log = function(msg) {
           chrome.extension.sendRequest({'action': 'log', 'value': msg});
@@ -39,28 +40,7 @@
                    i++) {
                   var r = obj.results[i].data;
                   var t = $('#result-template .thing').clone();
-                  $('.rank', t).text(i);
-                  $('.score.dislikes', t).text(r.downs);
-                  $('.score.unvoted', t).text(r.score);
-                  $('.score.likes', t).text(Math.max(0, r.ups - r.downs));
-                  $('a.title, a.thumbnail', t).attr('href', r.url);
-                  if (r.thumbnail) {
-                      $('.thumbnail img', t).attr('src', r.thumbnail);
-                  } else {
-                      $('.thumbnail', t).hide();
-                  }
-                  $('a.title', t).text(r.title);
-                  $('.domain a')
-                  .attr(
-                       'href',
-                       'http://www.reddit.com/domain/'
-                       + encodeURIComponent(r.domain)
-                       + '/')
-                  .text(r.domain);
-
-
-                  $('.debug', t).text(JSON.stringify(r));
-                  $(t).appendTo($('.content', e));
+                  $(t).redditResult(r).appendTo($('.content', e));
                   $('<div class="clearleft" />').appendTo($('.content', e));
               };
 
@@ -130,28 +110,27 @@
       </div>
     </div>
     <div id="result-template" style="display: none;">
-      <div class=" thing id-t3_ie44o even odd link" onclick="click_thing(this)">
+      <div class="thing id-t3_ie44o link">
         <div class="debug"></div>
         <p class="parent"></p>
-        <span class="rank" style="width:2.20ex;">3</span>
-        <div class="midcol unvoted" style="width:5ex;">
-          <div class="arrow up" onclick="$(this).vote('1a026347099945eb2d4936e1d403dd74752ba4b3', null, event)"></div>
-          <div class="score dislikes">2054</div>
-          <div class="score unvoted">2055</div>
-          <div class="score likes">2056</div>
-          <div class="arrow down" onclick="$(this).vote('1a026347099945eb2d4936e1d403dd74752ba4b3', null, event)"></div>
+        <div class="midcol" style="width:5ex;">
+          <div class="arrow up"></div>
+          <div class="score dislikes"></div>
+          <div class="score unvoted"></div>
+          <div class="score likes"></div>
+          <div class="arrow down"></div>
         </div>
-        <a class="thumbnail loggedin " href="http://i.imgur.com/39mgd.png" target="_blank">​<img src="http://thumbs.reddit.com/t3_ie44o.png" alt=""></a>
+        <a class="thumbnail" href="#" target="_blank"><img src="#" alt="" /></a>
         <div class="entry unvoted">
           <p class="title">
-            <a class="title loggedin  click" href="http://i.imgur.com/39mgd.png" target="_blank">Son, I am not disappoint.</a>
-            <span class="domain">(<a href="http://www.reddit.com/domain/i.imgur.com/">i.imgur.com</a>)</span>
+            <a class="title" href="#" target="_blank"></a>
+            <span class="domain">(<a href="#" target="_blank"></a>)</span>
           </p>
           <p class="tagline">submitted
-            <time title="Fri Jul 1 10:57:09 2011 GMT" datetime="2011-07-01T10:57:09.635212+00:00">8 hours</time> ago by
-            <a href="http://www.reddit.com/user/plasticmouse" class="author id-t2_4wtzj">plasticmouse</a>
+            <time title="Fri Jul 1 10:57:09 2011 GMT" datetime="2011-07-01T10:57:09.635212+00:00"></time> ago by
+            <a href="#" class="author" target="_blank"></a>
             <span class="userattrs"></span> to
-            <a href="http://www.reddit.com/r/pics/" class="subreddit hover">pics</a>
+            <a href="#" class="subreddit hover" target="_blank"></a>
             <script type="text/javascript">
               // reddit.sr['t3_ie44o'] = 't5_2qh0u';
             </script>

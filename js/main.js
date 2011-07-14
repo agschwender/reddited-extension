@@ -14,6 +14,43 @@ Reddited.get_reddit_search_uri = function(uri) {
         + '&src=reddited-extension';
 };
 
+Reddited.get_relative_time = function(t) {
+    function get_num_and_units(t) {
+        var n = new Date();
+        if (t > n) {
+            return [0, null];
+        }
+
+        var span = new TimePeriod(t, n);
+        if (span.getYears() > 0) {
+            return [span.getYears(), 'year'];
+        } else if (span.getMonths() > 0) {
+            return [span.getMonths(), 'month'];
+        } else if (span.getDays() > 0) {
+            return [span.getDays(), 'day'];
+        } else if (span.getHours() > 0) {
+            return [span.getHours(), 'hour'];
+        } else if (span.getMinutes() > 0) {
+            return [span.getMinutes(), 'minute'];
+        } else if (span.getSeconds() > 0) {
+            return [span.getSeconds(), 'second'];
+        } else if (span.getMilliseconds() > 0) {
+            return [span.getMilliseconds(), 'milliseconds'];
+        }
+
+        return [0, null];
+    }
+
+    var a = get_num_and_units(t);
+    if (a[0] == 0) {
+        return '0 milliseconds';
+    } else if (a[0] == 1) {
+        return '' + a[0] + ' ' + a[1];
+    }
+
+    return '' + a[0] + ' ' + a[1] + 's';
+};
+
 Reddited.Page = function(uri, meta) {
     this.uri = uri;
     this.canonical_uri = $.trim(meta.canonical_uri || '');
@@ -328,5 +365,45 @@ Reddited.Finder.prototype.onRequestError = function(type) {};
 Reddited.Finder.prototype.onRequestSuccess = function(obj) {};
 
 // jQuery plugins
+
+(function($) {
+    $.fn.redditResult = function(r) {
+        return $(this).each(function() { $.redditResult(r, this); });
+    };
+
+    $.redditResult = function(r, e) {
+        $('.score.dislikes', e).text(r.downs);
+        $('.score.unvoted', e).text(r.score);
+        $('.score.likes', e).text(Math.max(0, r.ups - r.downs));
+        $('a.title, a.thumbnail', e).attr('href', r.url);
+        if (r.thumbnail) {
+            $('.thumbnail img', e).attr('src', r.thumbnail);
+        } else {
+            $('.thumbnail', e).hide();
+        }
+        $('a.title', e).text(r.title);
+        $('.domain a')
+            .attr(
+                'href',
+                'http://www.reddit.com/domain/'
+                    + encodeURIComponent(r.domain)
+                    + '/')
+            .text(r.domain);
+        $('.author', e)
+            .attr('href',
+                  'http://www.reddit.com/user/'
+                  + encodeURIComponent(r.author))
+            .text(r.author);
+        $('.subreddit', e)
+            .attr('href',
+                  'http://www.reddit.com/r/'
+                  + encodeURIComponent(r.subreddit)
+                  + '/')
+            .text(r.subreddit);
+        $('.tagline time', e)
+            .text(Reddited.get_relative_time(new Date(r.created_utc * 1000)));
+        return $;
+    };
+})(jQuery);
 
 (function(h,f){var i={a:"href",img:"src",form:"action",base:"href",script:"src",iframe:"src",link:"href"},j=["source","protocol","authority","userInfo","user","password","host","port","relative","path","directory","file","query","fragment"],e={anchor:"fragment"},a={strict:/^(?:([^:\/?#]+):)?(?:\/\/((?:(([^:@]*):?([^:@]*))?@)?([^:\/?#]*)(?::(\d*))?))?((((?:[^?#\/]*\/)*)([^?#]*))(?:\?([^#]*))?(?:#(.*))?)/,loose:/^(?:(?![^:@]+:[^:@\/]*@)([^:\/?#.]+):)?(?:\/\/)?((?:(([^:@]*):?([^:@]*))?@)?([^:\/?#]*)(?::(\d*))?)(((\/(?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[?#]|$)))*\/?)?([^?#\/]*))(?:\?([^#]*))?(?:#(.*))?)/},c=/(?:^|&|;)([^&=;]*)=?([^&;]*)/g,b=/(?:^|&|;)([^&=;]*)=?([^&;]*)/g;function g(k,n){var p=decodeURI(k),m=a[n||false?"strict":"loose"].exec(p),o={attr:{},param:{},seg:{}},l=14;while(l--){o.attr[j[l]]=m[l]||""}o.param.query={};o.param.fragment={};o.attr.query.replace(c,function(r,q,s){if(q){o.param.query[q]=s}});o.attr.fragment.replace(b,function(r,q,s){if(q){o.param.fragment[q]=s}});o.seg.path=o.attr.path.replace(/^\/+|\/+$/g,"").split("/");o.seg.fragment=o.attr.fragment.replace(/^\/+|\/+$/g,"").split("/");o.attr.base=o.attr.host?o.attr.protocol+"://"+o.attr.host+(o.attr.port?":"+o.attr.port:""):"";return o}function d(l){var k=l.tagName;if(k!==f){return i[k.toLowerCase()]}return k}h.fn.url=function(l){var k="";if(this.length){k=h(this).attr(d(this[0]))||""}return h.url(k,l)};h.url=function(k,l){if(arguments.length===1&&k===true){l=true;k=f}l=l||false;k=k||window.location.toString();return{data:g(k,l),attr:function(m){m=e[m]||m;return m!==f?this.data.attr[m]:this.data.attr},param:function(m){return m!==f?this.data.param.query[m]:this.data.param.query},fparam:function(m){return m!==f?this.data.param.fragment[m]:this.data.param.fragment},segment:function(m){if(m===f){return this.data.seg.path}else{m=m<0?this.data.seg.path.length+m:m-1;return this.data.seg.path[m]}},fsegment:function(m){if(m===f){return this.data.seg.fragment}else{m=m<0?this.data.seg.fragment.length+m:m-1;return this.data.seg.fragment[m]}}}}})(jQuery);
