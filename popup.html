@@ -1,9 +1,9 @@
 <html>
   <head>
-    <link rel="stylesheet" href="css/reddit.css?v=1.3.1" />
+    <link rel="stylesheet" href="css/reddit.css?v=1.3.4" />
     <script type="text/javascript" src="js/jquery-1.6.1.min.js"></script>
     <script type="text/javascript" src="js/date.js"></script>
-    <script type="text/javascript" src="js/main.js?v=1.3.1"></script>
+    <script type="text/javascript" src="js/main.js?v=1.3.4"></script>
     <script>
       console.log = function(msg) {
           chrome.extension.sendRequest({'action': 'log', 'value': msg});
@@ -137,6 +137,9 @@
             <a href="#" class="subreddit hover" target="_blank"></a>
           </p>
           <ul class="flat-list buttons">
+            <li class="rounded nsfw-stamp stamp" style="display: none;">
+              <acronym title="Adult content: Not Safe For Work">NSFW</acronym>
+            </li>
             <li class="first">
               <a class="comments" href="#" target="_blank"></a>
             </li>

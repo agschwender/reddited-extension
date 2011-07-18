@@ -524,6 +524,9 @@ Reddited.Finder.prototype.onRequestSuccess = function(obj) {};
                   : (r.num_comments == 1
                      ? '1 comment'
                      : '' + r.num_comments + ' comments'));
+        if (r.over_18) {
+            $('.nsfw-stamp', e).show();
+        }
         return $;
     };
 })(jQuery);
