@@ -4,15 +4,9 @@
     <script type="text/javascript" src="js/jquery-1.6.1.min.js"></script>
     <script type="text/javascript" src="js/main.js"></script>
     <script>
-var cache = new Reddited.Cache();
-var pages = {};
-
-function get_tab_search_uri(tab) {
-    if (pages[tab.id] && pages[tab.id].uri == tab.url) {
-        return pages[tab.id].get_preferred_uri();
-    }
-    return tab.url;
-};
+var globals = {'modhash': null,
+               'cache': new Reddited.Cache(),
+               'pages': {}};
 
 function on_tab_changed(tab) {
     if (tab.url.indexOf('http://') == 0) {
@@ -23,11 +17,15 @@ function on_tab_changed(tab) {
 };
 
 function on_tab_ready(tab) {
-    var finder = new Reddited.Finder(cache);
+    var finder = new Reddited.Finder(globals);
     finder.onRequestSuccess = function(obj) {
         set_badge(tab, obj.count);
     };
-    finder.request_uri_details(get_tab_search_uri(tab));
+    var url = tab.url;
+    if (globals.pages[tab.id] && globals.pages[tab.id].uri == tab.url) {
+        url = globals.pages[tab.id].get_preferred_uri();
+    }
+    finder.request_uri_details(url);
 };
 
 function set_badge(tab, count) {
@@ -52,14 +50,14 @@ chrome.tabs.onSelectionChanged.addListener(function() {
 });
 
 chrome.tabs.onRemoved.addListener(function(id, info) {
-    if (pages[id]) { delete pages[id]; }
+    if (globals.pages[id]) { delete globals.pages[id]; }
 });
 
 chrome.extension.onRequest.addListener(function(request, sender, callback) {
     if (request.action == 'log') {
         console.log(request.value);
     } else if (request.action == 'content-ready') {
-        pages[sender.tab.id] = new Reddited.Page(
+        globals.pages[sender.tab.id] = new Reddited.Page(
             sender.tab.url, {'canonical_uri': request.canonical});
         on_tab_ready(sender.tab);
     } else if (request.action == 'proactive-cache') {

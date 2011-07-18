@@ -14,6 +14,28 @@ Reddited.get_reddit_search_uri = function(uri) {
         + '&src=reddited-extension';
 };
 
+Reddited.relative_uri_to_absolute = function(relative, base) {
+    if (!$.trim(relative)) {
+        return base;
+    }
+
+    var o = $.url(relative);
+    if (o.attr('protocol')) {
+        return relative;
+    }
+    o = $.url(base);
+    if (relative.indexOf('/') == 0) {
+        return base.substr(0, base.lastIndexOf(o.attr('relative'))) + relative;
+    }
+
+    var absolute = o.attr('directory');
+    while (/^\.\./.test(relative)){
+	absolute = absolute.substring(0, absolute.lastIndexOf('/'));
+	relative = relative.substring(3);
+    }
+    return absolute;
+};
+
 Reddited.get_relative_time = function(t) {
     function get_num_and_units(t) {
         var n = new Date();
@@ -35,7 +57,7 @@ Reddited.get_relative_time = function(t) {
         } else if (span.getSeconds() > 0) {
             return [span.getSeconds(), 'second'];
         } else if (span.getMilliseconds() > 0) {
-            return [span.getMilliseconds(), 'milliseconds'];
+            return [span.getMilliseconds(), 'millisecond'];
         }
 
         return [0, null];
@@ -56,28 +78,6 @@ Reddited.Page = function(uri, meta) {
     this.canonical_uri = $.trim(meta.canonical_uri || '');
 };
 
-Reddited.Page.prototype._relative_uri_to_absolute = function(relative, base) {
-    if (!$.trim(relative)) {
-        return base;
-    }
-
-    var o = $.url(relative);
-    if (o.attr('protocol')) {
-        return relative;
-    }
-    o = $.url(base);
-    if (relative.indexOf('/') == 0) {
-        return base.substr(0, base.indexOf(o.attr('path'))) + relative;
-    }
-
-    var absolute = o.attr('directory');
-    while (/^\.\./.test(relative)){
-	absolute = absolute.substring(0, absolute.lastIndexOf('/'));
-	relative = relative.substring(3);
-    }
-    return absolute;
-};
-
 Reddited.Page.prototype._is_shortened_uri = function(shortened, full) {
     var m = $.url(shortened);
     var n = $.url(full);
@@ -95,7 +95,7 @@ Reddited.Page.prototype._is_shortened_uri = function(shortened, full) {
 
 Reddited.Page.prototype.get_preferred_uri = function() {
     if (!this.canonical_uri) { return this.uri; }
-    var preferred_uri = this._relative_uri_to_absolute(
+    var preferred_uri = Reddited.relative_uri_to_absolute(
         this.canonical_uri, this.uri);
     if (!this._is_shortened_uri(preferred_uri, this.uri)) {
         return this.uri;
@@ -142,6 +142,13 @@ Reddited.Cache.prototype.purge_stale = function() {
     }
     return this;
 };
+
+Reddited.Cache.prototype.clear = function() {
+    for (var k in this._cache) {
+        delete this._cache[k];
+    }
+    return this;
+}
 
 
 Reddited.Storage = function() {
@@ -267,8 +274,9 @@ Reddited.Storage.prototype.save = function(force) {
 }
 
 
-Reddited.Finder = function(cache) {
-    this._cache = cache || new Reddited.Cache();
+Reddited.Finder = function(globals) {
+    this._globals = globals;
+    this._globals.cache = this._globals.cache || new Reddited.Cache();
     this._storage = new Reddited.Storage();
 };
 
@@ -287,7 +295,9 @@ Reddited.Finder.prototype._parse_response = function(o) {
     }
 
     o.data.children = o.data.children || [];
-    return {'count': o.data.children.length, 'results': o.data.children};
+    return {'modhash': o.data.modhash,
+            'count': o.data.children.length,
+            'results': o.data.children};
 };
 
 Reddited.Finder.prototype._handle_response = function(uri, response, xhr) {
@@ -301,7 +311,14 @@ Reddited.Finder.prototype._handle_response = function(uri, response, xhr) {
         console.log(err);
         return this.onRequestError(Reddited.Finder.REQUEST_ERROR_BAD_RESPONSE);
     }
-    this._cache.set(uri, obj);
+    var modhash = obj.modhash;
+    if ((!this._globals['modhash'] || !modhash) &&
+        (this._globals['modhash'] || modhash)) {
+        this._globals.cache.clear();
+    }
+    delete obj.modhash;
+    this._globals.modhash = modhash;
+    this._globals.cache.set(uri, obj);
     this.onRequestSuccess(obj);
 };
 
@@ -317,7 +334,7 @@ Reddited.Finder.prototype.request_uri_details = function(uri, opts) {
         return this.onRequestIgnored();
     }
 
-    var obj = this._cache.get(uri);
+    var obj = this._globals.cache.get(uri);
     if (obj && !(opts.require_results && obj.count_only)) {
         console.log('reddited: using cache');
         return this.onRequestSuccess(obj);
@@ -367,22 +384,118 @@ Reddited.Finder.prototype.onRequestSuccess = function(obj) {};
 // jQuery plugins
 
 (function($) {
-    $.fn.redditResult = function(r) {
-        return $(this).each(function() { $.redditResult(r, this); });
+    $.fn.redditVotable = function(modhash) {
+        $(this).click(function() {
+            if ($(this).hasClass('down')) {
+                $(this)._redditVotedown(modhash);
+            } else {
+                $(this)._redditVoteup(modhash);
+            }
+            return false;
+        });
+        var e = $(this).closest('.thing');
+        $(this).each(function() {
+            if ($(this).hasClass('up') && $(e).data('likes') === true) {
+                $(this).addClass('mod');
+            } else if ($(this).hasClass('down') &&
+                       $(e).data('likes') === false) {
+                $(this).addClass('mod');
+            }
+        });
     };
 
-    $.redditResult = function(r, e) {
+    $.fn._redditVoteup = function(modhash) {
+        var e = $(this).closest('.thing');
+        var dir = 1, inc = 1;
+        if ($(e).data('likes') === true) {
+            dir = 0, inc = -1;
+        } else if ($(e).data('likes') === false) {
+            inc = 2;
+        }
+        return $(this)._redditVote(modhash, dir, inc);
+    };
+
+    $.fn._redditVotedown = function(modhash) {
+        var e = $(this).closest('.thing');
+        var dir = -1, inc = -1;
+        if ($(e).data('likes') === true) {
+            inc = -2;
+        } else if ($(e).data('likes') === false) {
+            dir = 0, inc = 1;
+        }
+        return $(this)._redditVote(modhash, dir, inc);
+    };
+
+    $.fn._redditVote = function(modhash, dir, inc) {
+        if (!modhash) {
+            $('#action-error').show();
+            return false;
+        }
+        var e = $(this).closest('.thing');
+        $.ajax({'url': 'http://www.reddit.com/api/vote',
+                'type': 'POST',
+                'data': {'id': $(e).data('name'), 'dir': dir, 'uh': modhash}});
+        $('.arrow.up, .arrow.down', e).removeClass('mod');
+        if (dir == 1 ) {
+            $('.arrow.up', e).addClass('mod');
+            $(e).data('likes', true);
+        } else if (dir == -1) {
+            $('.arrow.down', e).addClass('mod');
+            $(e).data('likes', false);
+        } else {
+            $(e).data('likes', null);
+        }
+        $('.score.unvoted', e).text(
+            Math.max(0, inc + parseInt($('.score.unvoted', e).text())));
+    };
+})(jQuery);
+
+(function($) {
+    $.fn.redditSavable  = function(modhash) {
+        var e = $(this).closest('.thing');
+        $(this).text($(e).data('saved') ? 'unsave' : 'save');
+        $(this).click(function() {
+            if (!modhash) {
+                $('#action-error').show();
+                return false;
+            }
+            var endpoint = 'save', text = 'saved';
+            if ($(e).data('saved')) {
+                endpoint = 'unsave', text = 'unsaved';
+            }
+            $.ajax({'url': 'http://www.reddit.com/api/' + endpoint,
+                    'type': 'POST',
+                    'data': {'id': $(e).data('name'), 'uh': modhash}});
+            $(this).parent().text(text);
+            $(e).data('saved', !$(e).data('saved'));
+            return false;
+        });
+    };
+})(jQuery);
+
+(function($) {
+    $.fn.redditResult = function(opts, r) {
+        return $(this).each(function() { $.redditResult(opts, r, this); });
+    };
+
+    $.redditResult = function(opts, r, e) {
+        $(e).data(r);
+        $('.arrow', e).redditVotable(opts.modhash);
+        $('.savable', e).redditSavable(opts.modhash);
         $('.score.dislikes', e).text(r.downs);
         $('.score.unvoted', e).text(r.score);
-        $('.score.likes', e).text(Math.max(0, r.ups - r.downs));
+        $('.score.likes', e).text(r.ups);
         $('a.title, a.thumbnail', e).attr('href', r.url);
         if (r.thumbnail) {
-            $('.thumbnail img', e).attr('src', r.thumbnail);
+            $('.thumbnail img', e)
+                .attr('src',
+                      Reddited.relative_uri_to_absolute(
+                          r.thumbnail, 'http://www.reddit.com/'));
         } else {
             $('.thumbnail', e).hide();
         }
         $('a.title', e).text(r.title);
-        $('.domain a')
+        $('.domain a', e)
             .attr(
                 'href',
                 'http://www.reddit.com/domain/'
@@ -402,6 +515,13 @@ Reddited.Finder.prototype.onRequestSuccess = function(obj) {};
             .text(r.subreddit);
         $('.tagline time', e)
             .text(Reddited.get_relative_time(new Date(r.created_utc * 1000)));
+        $('.comments', e)
+            .attr('href', 'http://www.reddit.com/' + r.permalink)
+            .text(r.num_comments == 0
+                  ? 'comment'
+                  : (r.num_comments == 1
+                     ? '1 comment'
+                     : '' + r.num_comments + ' comments'));
         return $;
     };
 })(jQuery);

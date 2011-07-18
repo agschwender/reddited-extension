@@ -1,10 +1,10 @@
 body {
-  min-width:357px;
+  min-width:407px;
   overflow-x:hidden;
 }
 
 #results, #loader, .reddited-message {
-  width: 350px;
+  width: 400px;
   padding: 10px 0px;
 }
 .reddited-message { font-size: small; padding: 10px; }
@@ -14,6 +14,9 @@ body {
 
 #view-more { margin-left: 10px; }
 #results-none .morelink {  margin-top: 5px; }
+
+#action-error { font-size: small; color: red; width: 100%; text-align: center; margin: 0px 0px 10px 0px; display: none; }
+#action-error a { color: red; text-decoration: underline; }
 
 /**
  * Copied from reddit css file
@@ -114,14 +117,6 @@ a:focus { -moz-outline-style:none; }
  margin-left:auto;
  margin-right:auto;
 }
-.arrow.upmod {
- background-image:url(/images/sprite.png);
- background-position:-4px -227px;
-}
-.arrow.downmod {
- background-image:url(/images/sprite.png);
- background-position:-4px -249px;
-}
 .arrow.up {
  background-image:url(/images/sprite.png);
  background-position:-4px -271px;
@@ -129,6 +124,14 @@ a:focus { -moz-outline-style:none; }
 .arrow.down {
  background-image:url(/images/sprite.png);
  background-position:-4px -293px;
+}
+.arrow.up.mod {
+ background-image:url(/images/sprite.png);
+ background-position:-4px -227px;
+}
+.arrow.down.mod {
+ background-image:url(/images/sprite.png);
+ background-position:-4px -249px;
 }
 .midcol {
  float:left;
