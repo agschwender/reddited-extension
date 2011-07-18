@@ -61,8 +61,8 @@ chrome.extension.onRequest.addListener(function(request, sender, callback) {
             sender.tab.url, {'canonical_uri': request.canonical});
         on_tab_ready(sender.tab);
     } else if (request.action == 'proactive-cache') {
-        if (!cache.get(request.uri)) {
-            cache.set(request.uri, {'count': 1, 'count_only': true});
+        if (!globals.cache.get(request.uri)) {
+            globals.cache.set(request.uri, {'count': 1, 'count_only': true});
         }
     } else if (request.action == 'set-badge') {
         chrome.tabs.get(request.tabId, function(tab) {
