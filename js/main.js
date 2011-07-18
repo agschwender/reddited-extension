@@ -173,6 +173,7 @@ Reddited.Storage.OPTIONS_AUTO_CHECK = ['never', 'whitelist', 'always'];
 Reddited.Storage.DEFAULT_AUTO_CHECK = 'whitelist';
 Reddited.Storage.DEFAULT_AUTO_CHECK_WHITELIST =  [
     'bbc.co.uk',
+    'blog.reddit.com',
     'blogspot.com',
     'boingboing.net',
     'cnn.com',
