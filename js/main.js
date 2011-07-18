@@ -485,7 +485,8 @@ Reddited.Finder.prototype.onRequestSuccess = function(obj) {};
         $('.score.dislikes', e).text(r.downs);
         $('.score.unvoted', e).text(r.score);
         $('.score.likes', e).text(r.ups);
-        $('a.title, a.thumbnail', e).attr('href', r.url);
+        $('a.title, a.thumbnail', e)
+            .attr('href', $('<textarea/>').html(r.url).val());
         if (r.thumbnail) {
             $('.thumbnail img', e)
                 .attr('src',
