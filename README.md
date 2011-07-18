@@ -9,11 +9,11 @@ Click the Reddit Anywhere extension button on any page and the extension will se
 
 ### Main Features
 
-  •  Will automatically indicate if the page has been submitted to Reddit
-  •  Allows voting directly from the page
-  •  Uses Reddit layout
-  •  Allows you to manage the auto-indication privacy settings
-  •  Uses the canonical URL to avoid submitting duplicate pages
+*  Will automatically indicate if the page has been submitted to Reddit
+*  Allows voting directly from the page
+*  Uses Reddit layout
+*  Allows you to manage the auto-indication privacy settings
+*  Uses the canonical URL to avoid submitting duplicate pages
 
 ### Details
 
