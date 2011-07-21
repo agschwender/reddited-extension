@@ -1,4 +1,4 @@
-Reddited Browser Extension
+Reddit Anywhere Browser Extension
 ==========================
 
 The Reddit Anywhere extension (formerly Reddited) allows you to check if the page you are viewing has been submitted to Reddit. It works on all URLs: web pages, videos, images, etc... So now you can finally get the inscrutable imgur jokes your friends send you. It allows you to quickly up or down vote the page or go directly to the page's comments without having to search on Reddit. And if the page you are viewing hasn't been submitted to Reddit, the extension provides a convenient link for submitting the page yourself.  
