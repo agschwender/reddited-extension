@@ -350,7 +350,8 @@ Reddited.Finder.prototype.request_uri_details = function(uri, opts) {
     console.log('reddited: making request');
     this.onRequesting();
     var f = $.proxy(this._handle_response, this);
-    $.ajax(Reddited.get_reddit_search_uri(uri.replace(/\#.*$/, '')),
+    $.ajax(Reddited.get_reddit_search_uri(
+        uri.replace(/\#[^\!].*$/, '').replace(/\#$/, '')),
            {'cache': true,
             'success': function(data, ts, jqXHR) { f(uri, data, jqXHR); },
             'error': function(jqXHR) { f(uri, null, jqXHR); }});
