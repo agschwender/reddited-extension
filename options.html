@@ -37,10 +37,6 @@ $(document).ready(function() {
         'reddited-storage-loaded',
         function(event, storage) { loadFromStorage(storage); }
     );
-    $(document).bind(
-        'reddited-storage-saved',
-        function(event, storage) { loadFromStorage(storage); }
-    );
 
     var storage = new Reddited.Storage();
     $('input[name=auto_check]').change(function() {
@@ -57,6 +53,7 @@ $(document).ready(function() {
     $('#customize_links a').click(function() {
         storage.set_auto_check_whitelist_customized(
             !storage.get_auto_check_whitelist_customized()).save();
+        loadFromStorage(storage);
     });
     $('#auto_check_https').change(function() {
         storage.set_auto_check_https($(this).is(':checked')).save();
