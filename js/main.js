@@ -6,6 +6,12 @@ Reddited.get_reddit_submit_uri = function(uri) {
     return 'http://www.reddit.com/submit?url=' + encodeURIComponent(uri);
 };
 
+Reddited.get_reddit_view_more_uri = function(uri) {
+    return 'http://www.reddit.com/search'
+        + '?q=' + encodeURIComponent('url:' + uri)
+        + '&sort=relevance';
+};
+
 Reddited.get_reddit_search_uri = function(uri) {
     return 'http://www.reddit.com/search.json'
         + '?q=' + encodeURIComponent('url:' + uri)
