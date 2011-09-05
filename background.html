@@ -2,7 +2,7 @@
 <html>
   <head>
     <script type="text/javascript" src="js/jquery-1.6.1.min.js"></script>
-    <script type="text/javascript" src="js/main.js"></script>
+    <script type="text/javascript" src="js/main.js?v=1.3.9"></script>
     <script>
 var globals = {'modhash': null,
                'cache': new Reddited.Cache(),
@@ -22,10 +22,12 @@ function on_tab_ready(tab) {
         set_badge(tab, obj.count);
     };
     var url = tab.url;
+    var canonical_urls = [];
     if (globals.pages[tab.id] && globals.pages[tab.id].uri == tab.url) {
-        url = globals.pages[tab.id].get_preferred_uri();
+        url = globals.pages[tab.id].uri;
+        canonical_urls = globals.pages[tab.id].canonical_uris;
     }
-    finder.request_uri_details(url);
+    finder.request_uri_details(url, {'canonical_uris': canonical_urls});
 };
 
 function set_badge(tab, count) {
@@ -58,7 +60,7 @@ chrome.extension.onRequest.addListener(function(request, sender, callback) {
         console.log(request.value);
     } else if (request.action == 'content-ready') {
         globals.pages[sender.tab.id] = new Reddited.Page(
-            sender.tab.url, {'canonical_uri': request.canonical});
+            sender.tab.url, {'canonical_uris': request.canonicals});
         on_tab_ready(sender.tab);
     } else if (request.action == 'proactive-cache') {
         if (!globals.cache.get(request.uri)) {

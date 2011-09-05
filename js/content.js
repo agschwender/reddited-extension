@@ -1,7 +1,8 @@
-function reddited_get_canonical_uri() {
+function reddited_get_canonical_uris() {
     var heads = document.getElementsByTagName('head')
     if (!heads.length) { return; }
 
+    var uris = [];
     // prefer og:url over canonical since companies are
     // incentivized to keep it accurate
     var metas = heads[0].getElementsByTagName('meta');
@@ -11,7 +12,8 @@ function reddited_get_canonical_uri() {
             attrs.property.value.toLowerCase() == 'og:url' &&
             attrs.content &&
             attrs.content.value) {
-            return attrs.content.value;
+            uris.push(attrs.content.value);
+            break;
         }
     }
 
@@ -22,22 +24,17 @@ function reddited_get_canonical_uri() {
             attrs.rel.value.toLowerCase() == 'canonical' &&
             attrs.href &&
             attrs.href.value) {
-            return attrs.href.value;
+            uris.push(attrs.href.value);
+            break;
         }
     }
 
-    throw "no canonical uri";
+    return uris;
 }
 
 function reddited_do_content_changed() {
-    var canonical;
-    try {
-        canonical = reddited_get_canonical_uri();
-    } catch (err) {
-        // ignore
-    }
     chrome.extension.sendRequest({"action": "content-ready",
-                                  "canonical": canonical});
+                                  "canonicals": reddited_get_canonical_uris()});
 }
 
 reddited_do_content_changed();

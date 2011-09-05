@@ -2,19 +2,29 @@ var Reddited = Reddited || {};
 
 Reddited.MAX_RESULTS = 5;
 
-Reddited.get_reddit_submit_uri = function(uri) {
-    return 'http://www.reddit.com/submit?url=' + encodeURIComponent(uri);
+Reddited._make_reddit_search_string = function(uri, canonical_uris) {
+    uris = $.merge([uri], (canonical_uris || []));
+    for (var i = 0; i < uris.length; i++) {
+        uris[i] = uris[i].replace(/\#[^\!].*$/, '').replace(/\#$/, '');
+    }
+    return 'url:' + $.unique(uris).join(' OR url:');
 };
 
-Reddited.get_reddit_view_more_uri = function(uri) {
+Reddited.get_reddit_submit_uri = function(uri) {
+    return 'http://www.reddit.com/submit?url=' + escape(uri);
+};
+
+Reddited.get_reddit_view_more_uri = function(uri, canonical_uris) {
     return 'http://www.reddit.com/search'
-        + '?q=' + encodeURIComponent('url:' + uri)
+        + '?q='
+        + escape(Reddited._make_reddit_search_string(uri, canonical_uris))
         + '&sort=relevance';
 };
 
-Reddited.get_reddit_search_uri = function(uri) {
+Reddited.get_reddit_search_uri = function(uri, canonical_uris) {
     return 'http://www.reddit.com/search.json'
-        + '?q=' + encodeURIComponent('url:' + uri)
+        + '?q='
+        + escape(Reddited._make_reddit_search_string(uri, canonical_uris))
         + '&sort=relevance'
         + '&limit=' + (Reddited.MAX_RESULTS + 1)
         + '&src=reddited-extension';
@@ -81,33 +91,13 @@ Reddited.get_relative_time = function(t) {
 
 Reddited.Page = function(uri, meta) {
     this.uri = uri;
-    this.canonical_uri = $.trim(meta.canonical_uri || '');
-};
-
-Reddited.Page.prototype._is_shortened_uri = function(shortened, full) {
-    var m = $.url(shortened);
-    var n = $.url(full);
-    if (m.attr('host') != n.attr('host')) {
-        return false;
-    } else if (m.attr('path') != n.attr('path')) {
-        return false;
-    } else if (m.attr('query') &&
-               n.attr('query').indexOf(m.attr('query')) != 0) {
-        return false;
+    this.canonical_uris = meta.canonical_uris || [];
+    for (var i = 0; i < this.canonical_uris.length; i++) {
+        this.canonical_uris[i] = $.trim(this.canonical_uris[i]);
     }
-
-    return true;
+    this.canonical_uris = $.unique(this.canonical_uris);
 };
 
-Reddited.Page.prototype.get_preferred_uri = function() {
-    if (!this.canonical_uri) { return this.uri; }
-    var preferred_uri = Reddited.relative_uri_to_absolute(
-        this.canonical_uri, this.uri);
-    if (!this._is_shortened_uri(preferred_uri, this.uri)) {
-        return this.uri;
-    }
-    return preferred_uri;
-};
 
 Reddited.Cache = function() {
     this._cache = {};
@@ -350,8 +340,7 @@ Reddited.Finder.prototype.request_uri_details = function(uri, opts) {
     console.log('reddited: making request');
     this.onRequesting();
     var f = $.proxy(this._handle_response, this);
-    $.ajax(Reddited.get_reddit_search_uri(
-        uri.replace(/\#[^\!].*$/, '').replace(/\#$/, '')),
+    $.ajax(Reddited.get_reddit_search_uri(uri, opts.canonical_uris),
            {'cache': true,
             'success': function(data, ts, jqXHR) { f(uri, data, jqXHR); },
             'error': function(jqXHR) { f(uri, null, jqXHR); }});
@@ -503,23 +492,23 @@ Reddited.Finder.prototype.onRequestSuccess = function(obj) {};
         } else {
             $('.thumbnail', e).hide();
         }
-        $('a.title', e).text(r.title);
+        $('a.title', e).html(r.title);
         $('.domain a', e)
             .attr(
                 'href',
                 'http://www.reddit.com/domain/'
-                    + encodeURIComponent(r.domain)
+                    + escape(r.domain)
                     + '/')
             .text(r.domain);
         $('.author', e)
             .attr('href',
                   'http://www.reddit.com/user/'
-                  + encodeURIComponent(r.author))
+                  + escape(r.author))
             .text(r.author);
         $('.subreddit', e)
             .attr('href',
                   'http://www.reddit.com/r/'
-                  + encodeURIComponent(r.subreddit)
+                  + escape(r.subreddit)
                   + '/')
             .text(r.subreddit);
         $('.tagline time', e)
