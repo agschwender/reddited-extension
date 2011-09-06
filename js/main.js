@@ -93,7 +93,8 @@ Reddited.Page = function(uri, meta) {
     this.uri = uri;
     this.canonical_uris = meta.canonical_uris || [];
     for (var i = 0; i < this.canonical_uris.length; i++) {
-        this.canonical_uris[i] = $.trim(this.canonical_uris[i]);
+        this.canonical_uris[i] = $.trim(
+            Reddited.relative_uri_to_absolute(this.canonical_uris[i], uri));
     }
     this.canonical_uris = $.unique(this.canonical_uris);
 };
