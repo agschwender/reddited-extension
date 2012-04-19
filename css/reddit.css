@@ -165,7 +165,7 @@ a:focus { -moz-outline-style:none; }
 .media-button .option { color:red; }
 .media-button .option.active {
  background:transparent none no-repeat scroll right center;
- background-image:url(/static/sprite.png);
+ background-image:url(/images/sprite.png);
  background-position:-4px -315px;
  padding-right:15px;
  color:#336699;
@@ -176,6 +176,18 @@ a:focus { -moz-outline-style:none; }
  margin:0px 5px;
  overflow:hidden;
  width:70px;
+}
+.thumbnail.nsfw {
+ height:70px;
+ background-image:url(/images/sprite2.png);background-position: -0px -299px;background-repeat: no-repeat;
+}
+.thumbnail.self {
+ height:50px;
+ background-image:url(/images/sprite2.png);background-position: -0px -421px;background-repeat: no-repeat;
+}
+.thumbnail.default {
+ height:50px;
+ background-image:url(/images/sprite2.png);background-position: -0px -370px;background-repeat: no-repeat;
 }
 .thing .title { color:blue; padding: 0px; overflow: hidden; }
 .thing .title:visited { color:#551a8b }
