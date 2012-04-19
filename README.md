@@ -23,7 +23,18 @@ While there are comparable extensions, the Reddit Anywhere extension was designe
 
 ### Changelog
 
-*  v1.3.1 - v1.3.4
+*  v1.3.1 - v1.3.14
+  *  Fixed default image thumbnails
+  *  Updated search API call to reflects changes in Reddit API
+  *  Fixed encoding issue
+  *  Permission changes for allowing the identification of canonical URLs on secure pages
+  *  Fixed issue with relative canonical URLs not being transformed to absolute URLs
+  *  Canonical URLs are appended to search string using the OR operator rather than as a replacement to the browser URL
+  *  Fixed whitelist domain editing on the options page
+  *  Fixed for URLs that rely on #!, e.g. twitter
+  *  Fixed issue where view more link not displayed
+  *  Fixed comment link padding issue
+
   *  Added NSFW indicator
   *  Added blog.reddit.com to the list of domains which are automatically checked
   *  Fixed proactive caching error
