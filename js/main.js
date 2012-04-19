@@ -7,24 +7,26 @@ Reddited._make_reddit_search_string = function(uri, canonical_uris) {
     for (var i = 0; i < uris.length; i++) {
         uris[i] = uris[i].replace(/\#[^\!].*$/, '').replace(/\#$/, '');
     }
-    return 'url:' + $.unique(uris).join(' OR url:');
+    return 'url:\'' + $.unique(uris).join('\' OR url:\'') + '\'';
 };
 
 Reddited.get_reddit_submit_uri = function(uri) {
-    return 'http://www.reddit.com/submit?url=' + escape(uri);
+    return 'http://www.reddit.com/submit?url=' + encodeURIComponent(uri);
 };
 
 Reddited.get_reddit_view_more_uri = function(uri, canonical_uris) {
     return 'http://www.reddit.com/search'
         + '?q='
-        + escape(Reddited._make_reddit_search_string(uri, canonical_uris))
+        + encodeURIComponent(
+            Reddited._make_reddit_search_string(uri, canonical_uris))
         + '&sort=relevance';
 };
 
 Reddited.get_reddit_search_uri = function(uri, canonical_uris) {
     return 'http://www.reddit.com/search.json'
         + '?q='
-        + escape(Reddited._make_reddit_search_string(uri, canonical_uris))
+        + encodeURIComponent(
+            Reddited._make_reddit_search_string(uri, canonical_uris))
         + '&sort=relevance'
         + '&limit=' + (Reddited.MAX_RESULTS + 1)
         + '&src=reddited-extension';
@@ -498,18 +500,18 @@ Reddited.Finder.prototype.onRequestSuccess = function(obj) {};
             .attr(
                 'href',
                 'http://www.reddit.com/domain/'
-                    + escape(r.domain)
+                    + encodeURIComponent(r.domain)
                     + '/')
             .text(r.domain);
         $('.author', e)
             .attr('href',
                   'http://www.reddit.com/user/'
-                  + escape(r.author))
+                  + encodeURIComponent(r.author))
             .text(r.author);
         $('.subreddit', e)
             .attr('href',
                   'http://www.reddit.com/r/'
-                  + escape(r.subreddit)
+                  + encodeURIComponent(r.subreddit)
                   + '/')
             .text(r.subreddit);
         $('.tagline time', e)
