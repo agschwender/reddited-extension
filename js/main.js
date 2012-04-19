@@ -3,11 +3,16 @@ var Reddited = Reddited || {};
 Reddited.MAX_RESULTS = 5;
 
 Reddited._make_reddit_search_string = function(uri, canonical_uris) {
-    uris = $.merge([uri], (canonical_uris || []));
+    var uris = $.merge([uri], (canonical_uris || []));
     for (var i = 0; i < uris.length; i++) {
         uris[i] = uris[i].replace(/\#[^\!].*$/, '').replace(/\#$/, '');
     }
-    return 'url:\'' + $.unique(uris).join('\' OR url:\'') + '\'';
+    var unique_uris = $.unique(uris);
+    var s = 'url:\'' + unique_uris.join('\' url:\'') + '\'';
+    if (unique_uris.length > 1) {
+        s = '(or ' + s + ')';
+    }
+    return s;
 };
 
 Reddited.get_reddit_submit_uri = function(uri) {
@@ -488,10 +493,15 @@ Reddited.Finder.prototype.onRequestSuccess = function(obj) {};
         $('a.title, a.thumbnail', e)
             .attr('href', $('<textarea/>').html(r.url).val());
         if (r.thumbnail) {
-            $('.thumbnail img', e)
-                .attr('src',
-                      Reddited.relative_uri_to_absolute(
-                          r.thumbnail, 'http://www.reddit.com/'));
+            if ($.inArray(r.thumbnail, ['default', 'self', 'nsfw']) >= 0) {
+                $('.thumbnail', e).addClass(r.thumbnail);
+                $('.thumbnail img', e).hide();
+            } else {
+                $('.thumbnail img', e)
+                    .attr('src',
+                          Reddited.relative_uri_to_absolute(
+                              r.thumbnail, 'http://www.reddit.com/'));
+            }
         } else {
             $('.thumbnail', e).hide();
         }
