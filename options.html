@@ -2,64 +2,8 @@
   <head>
     <title>Reddited Extension Options</title>
     <script type="text/javascript" src="js/jquery-1.6.1.min.js"></script>
-    <script type="text/javascript" src="js/main.js"></script>
-    <script type="text/javascript">
-function loadFromStorage(storage) {
-    $('input[name=auto_check]').each(function() {
-        if ($(this).val() == storage.get_auto_check()) {
-            $(this).attr('checked', 'checked');
-        } else {
-            $(this).removeAttr('checked');
-        }
-    });
-    $('#auto_check_whitelist').val(
-        storage.get_auto_check_whitelist().join("\n"));
-    $('#auto_check_whitelist_customized').val(
-        storage.get_auto_check_whitelist_customized());
-    if (storage.get_auto_check_whitelist_customized()) {
-        $('#customize_links span.yes').hide();
-        $('#customize_links span.no').show();
-        $('#auto_check_whitelist').removeAttr('readonly');
-    } else {
-        $('#customize_links span.no').hide();
-        $('#customize_links span.yes').show();
-        $('#auto_check_whitelist').attr('readonly', 'readonly');
-    }
-    if (storage.get_auto_check_https()) {
-        $('#auto_check_https').attr('checked', 'checked');
-    } else {
-        $('#auto_check_https').removeAttr('checked');
-    }
-};
-
-$(document).ready(function() {
-    $(document).bind(
-        'reddited-storage-loaded',
-        function(event, storage) { loadFromStorage(storage); }
-    );
-
-    var storage = new Reddited.Storage();
-    $('input[name=auto_check]').change(function() {
-        storage.set_auto_check($(this).val()).save();
-    });
-    var f = function() {
-        storage.set_auto_check_whitelist($(this).val()).save();
-    };
-    $('#auto_check_whitelist').change(f).blur(f).keyup(f);
-    $('#auto_check_whitelist_customized').change(function() {
-        storage.set_auto_check_whitelist_customized(
-           $(this).is(':checked')).save();
-    });
-    $('#customize_links a').click(function() {
-        storage.set_auto_check_whitelist_customized(
-            !storage.get_auto_check_whitelist_customized()).save();
-        loadFromStorage(storage);
-    });
-    $('#auto_check_https').change(function() {
-        storage.set_auto_check_https($(this).is(':checked')).save();
-    });
-});
-    </script>
+    <script type="text/javascript" src="js/main.js?v=1.3.15"></script>
+    <script type="text/javascript" src="js/options.js?v=1.3.15"></script>
     <style type="text/css">
 body { cursor: default; font-size: 13px; background-color:white; color:black; margin:10px; font-family: Arial, sans-serif; }
 a:link { color: rgb(63, 110, 194); }
