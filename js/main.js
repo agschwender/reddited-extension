@@ -24,7 +24,7 @@ Reddited.get_reddit_view_more_uri = function(uri, canonical_uris) {
         + '?q='
         + encodeURIComponent(
             Reddited._make_reddit_search_string(uri, canonical_uris))
-        + '&sort=relevance';
+        + '&sort=hot';
 };
 
 Reddited.get_reddit_search_uri = function(uri, canonical_uris) {
@@ -32,7 +32,7 @@ Reddited.get_reddit_search_uri = function(uri, canonical_uris) {
         + '?q='
         + encodeURIComponent(
             Reddited._make_reddit_search_string(uri, canonical_uris))
-        + '&sort=relevance'
+        + '&sort=hot'
         + '&limit=' + (Reddited.MAX_RESULTS + 1)
         + '&src=reddited-extension';
 };
