@@ -7,11 +7,24 @@ Reddited._make_reddit_search_string = function(uri, canonical_uris) {
     for (var i = 0; i < uris.length; i++) {
         uris[i] = uris[i].replace(/\#[^\!].*$/, '').replace(/\#$/, '');
     }
-    var unique_uris = $.unique(uris);
-    var s = 'url:\'' + unique_uris.join('\' url:\'') + '\'';
-    if (unique_uris.length > 1) {
-        s = '(or ' + s + ')';
+    uris = $.unique(uris);
+    var final_uris = []
+    for (i = 0; i < uris.length; i++) {
+        var has_substring = false;
+        for (var j = 0; j < uris.length; j++) {
+            if (i == j) { continue; }
+            if (uris[i].indexOf(uris[j]) == 0) {
+                has_substring = true;
+                break;
+            }
+        }
+
+        if (!has_substring) {
+            final_uris.push(uris[i]);
+        }
     }
+
+    var s = 'url:\'' + final_uris.join('\' OR url:\'') + '\'';
     return s;
 };
 

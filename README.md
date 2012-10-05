@@ -23,7 +23,9 @@ While there are comparable extensions, the Reddit Anywhere extension was designe
 
 ### Changelog
 
-*  v1.3.1 - v1.3.15
+*  v1.3.1 - v1.3.17
+  *  Fix for change in how reddit expects boolean operators
+  *  Changed sort to hotness rather than relevance
   *  Changed for manifest v2 and new security requirements
   *  Fixed default image thumbnails
   *  Updated search API call to reflects changes in Reddit API
