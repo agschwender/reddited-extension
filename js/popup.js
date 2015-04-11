@@ -63,8 +63,9 @@ $(document).ready(function() {
                                               'tabId': tab.id});
             };
             $('.submit-uri').each(function() {
+                var resubmit = $(this).attr('data-resubmit') === '1';
                 $(this).attr(
-                    'href', Reddited.get_reddit_submit_uri(tab.url));
+                    'href', Reddited.get_reddit_submit_uri(tab.url, resubmit));
                 $(this).click(function() { cache.remove(url); });
             });
             $('#view-more a').attr(

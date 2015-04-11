@@ -28,8 +28,9 @@ Reddited._make_reddit_search_string = function(uri, canonical_uris) {
     return s;
 };
 
-Reddited.get_reddit_submit_uri = function(uri) {
-    return 'http://www.reddit.com/submit?url=' + encodeURIComponent(uri);
+Reddited.get_reddit_submit_uri = function(uri, resubmit) {
+    return 'http://www.reddit.com/submit?url=' + encodeURIComponent(uri)
+        + (resubmit ? '&resubmit=true' : '');
 };
 
 Reddited.get_reddit_view_more_uri = function(uri, canonical_uris) {

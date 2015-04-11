@@ -12,7 +12,9 @@ body {
 #loader { height: 50px; }
 #loader img { display: block; margin: 17px auto 0px auto; width: 128px; height: 15px; }
 
-#view-more { margin-left: 10px; }
+#two-columns { display: table; width: 100%; }
+#two-columns > * { display: table-cell; width: 50%; padding: 0 10px; }
+#submit-anyway { text-align: right; font-size: 12px; }
 #results-none .morelink {  margin-top: 5px; }
 
 #action-error { font-size: small; color: red; width: 100%; text-align: center; margin: 0px 0px 10px 0px; display: none; }
