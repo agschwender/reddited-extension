@@ -540,7 +540,9 @@ Reddited.Finder.prototype.onRequestSuccess = function(obj) {};
         $('.tagline time', e)
             .text(Reddited.get_relative_time(new Date(r.created_utc * 1000)));
         $('.comments', e)
-            .attr('href', 'http://www.reddit.com/' + r.permalink)
+            .attr('href',
+                  'http://www.reddit.com/'
+                  + (r.permalink || '').replace(/^\//, ''))
             .text(r.num_comments == 0
                   ? 'comment'
                   : (r.num_comments == 1
