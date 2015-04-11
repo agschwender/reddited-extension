@@ -25,7 +25,7 @@ section > div:only-of-type { -webkit-box-flex: 1; }
 div.checkbox, div.radio { margin: 5px 0; }
 div.group > div { margin-left: 20px; }
 div.group > div:first-child { margin-left: 0px; }
-#auto_check_whitelist { width: 300px; height: 150px; }
+#auto_check_whitelist, #auto_check_blacklist { width: 300px; height: 150px; }
 #auto_check_whitelist[readonly] { background: lightgrey; }
 #customize_links { margin-top: 5px; width: 300px; height: 15px; position: relative; }
 #customize_links a { position: absolute; right: 0px; }
@@ -61,6 +61,17 @@ div.group > div:first-child { margin-left: 0px; }
                     <input type="hidden" name="auto_check_whitelist_customized" id="auto_check_whitelist_customized" />
                     <a href="#"><span class="yes">Customize Domains</span><span class="no" style="display: none;">Restore Original</span></a>
                   </div>
+                </div>
+              </div>
+              <div class="group">
+                <div class="radio">
+                  <label>
+                    <input type="radio" name="auto_check" value="blacklist" />
+                    <span>Except for the listed domains (one per line):</span>
+                  </label>
+                </div>
+                <div class="textarea">
+                  <textarea name="auto_check_blacklist" id="auto_check_blacklist"></textarea>
                 </div>
               </div>
               <div class="group">

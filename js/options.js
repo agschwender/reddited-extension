@@ -19,6 +19,10 @@ function loadFromStorage(storage) {
         $('#customize_links span.yes').show();
         $('#auto_check_whitelist').attr('readonly', 'readonly');
     }
+
+    $('#auto_check_blacklist').val(
+        storage.get_auto_check_blacklist().join("\n"));
+
     if (storage.get_auto_check_https()) {
         $('#auto_check_https').attr('checked', 'checked');
     } else {
@@ -48,6 +52,9 @@ $(document).ready(function() {
         storage.set_auto_check_whitelist_customized(
             !storage.get_auto_check_whitelist_customized()).save();
         loadFromStorage(storage);
+    });
+    $('#auto_check_blacklist').change(function() {
+        storage.set_auto_check_blacklist($(this).val()).save();
     });
     $('#auto_check_https').change(function() {
         storage.set_auto_check_https($(this).is(':checked')).save();

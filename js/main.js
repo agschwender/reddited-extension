@@ -181,13 +181,19 @@ Reddited.Storage = function() {
     this.set_auto_check(o.auto_check);
     this.set_auto_check_whitelist(o.auto_check_whitelist);
     this.set_auto_check_whitelist_customized(o.auto_check_whitelist_customized);
+    this.set_auto_check_blacklist(o.auto_check_blacklist);
     this.set_auto_check_https(o.auto_check_https);
     this._local_state = this._current_state();
     $(document).trigger('reddited-storage-loaded', [this]);
 };
 
 Reddited.Storage.STORAGE_KEY = 'reddited_options';
-Reddited.Storage.OPTIONS_AUTO_CHECK = ['never', 'whitelist', 'always'];
+Reddited.Storage.OPTIONS_AUTO_CHECK = [
+    'never',
+    'whitelist',
+    'blacklist',
+    'always'
+];
 Reddited.Storage.DEFAULT_AUTO_CHECK = 'whitelist';
 Reddited.Storage.DEFAULT_AUTO_CHECK_WHITELIST =  [
     'bbc.co.uk',
@@ -219,6 +225,7 @@ Reddited.Storage.prototype._current_state = function() {
         'auto_check': this.get_auto_check(),
         'auto_check_whitelist': this.get_auto_check_whitelist(),
         'auto_check_whitelist_customized': this.get_auto_check_whitelist_customized(),
+        'auto_check_blacklist': this.get_auto_check_blacklist(),
         'auto_check_https': this.get_auto_check_https()
     };
     return JSON.stringify(obj);
@@ -270,6 +277,27 @@ Reddited.Storage.prototype.set_auto_check_whitelist_customized = function(v) {
 
 Reddited.Storage.prototype.get_auto_check_whitelist_customized = function() {
     return this._auto_check_whitelist_customized;
+};
+
+Reddited.Storage.prototype.set_auto_check_blacklist = function(v) {
+    if (!$.isArray(v)) {
+        v = $.trim(v || '');
+        if (v) {
+            v = v.split("\n");
+        } else {
+            v = [];
+        }
+    }
+    for (var i = 0; i < Math.min(200, v.length); i++) {
+        v[i] = $.trim(v[i]).toLowerCase();
+    }
+    v.sort();
+    this._auto_check_blacklist = v;
+    return this;
+};
+
+Reddited.Storage.prototype.get_auto_check_blacklist = function(required) {
+    return this._auto_check_blacklist;
 };
 
 Reddited.Storage.prototype.set_auto_check_https = function(v) {
@@ -372,20 +400,28 @@ Reddited.Finder.prototype.should_auto_check = function(uri) {
     var o = $.url(uri);
     var host = o.attr('host');
     var protocol = o.attr('protocol');
+    var i;
 
     if (this._storage.get_auto_check() == 'never') {
         return false;
+    } else if (protocol == 'https' && !this._storage.get_auto_check_https()) {
+        return false;
     } else if (this._storage.get_auto_check() == 'always') {
-        if (protocol == 'https' && !this._storage.get_auto_check_https()) {
-            return false;
+        return true;
+    } else if (this._storage.get_auto_check() == 'blacklist') {
+        var blacklist = this._storage.get_auto_check_blacklist(true);
+        for (i = 0; i < blacklist.length; i++) {
+            if (blacklist[i].length > host.length) {
+                continue;
+            } else if (host.substr(-1 * blacklist[i].length) == blacklist[i]) {
+                return false;
+            }
         }
         return true;
-    } else if (protocol == 'https') {
-        return false;
     }
 
     var whitelist = this._storage.get_auto_check_whitelist(true);
-    for (var i = 0; i < whitelist.length; i++) {
+    for (i = 0; i < whitelist.length; i++) {
         if (whitelist[i].length > host.length) {
             continue;
         } else if (host.substr(-1 * whitelist[i].length) == whitelist[i]) {
