@@ -40,10 +40,13 @@ body {
 }
 a img { border:0 none; }
 a { text-decoration:none; color: #369; }
-/*
+
 a:active { border:0 none;}
-a:focus { -moz-outline-style:none; }
-*/
+a:focus {
+    -moz-outline-style:none;
+    outline-width: 0px !important;
+}
+
 .rounded {
  -moz-border-radius:7px;
  -webkit-border-radius:7px;
