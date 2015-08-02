@@ -23,7 +23,8 @@ While there are comparable extensions, the Reddit Anywhere extension was designe
 
 ### Changelog
 
-*  v1.3.1 - v1.3.18
+*  v1.3.1 - v1.3.19
+  *  Include alternate and shortlink URLs when checking submission
   *  Add blacklist option and resubmit link
   *  Fix for change in how reddit expects boolean operators
   *  Changed sort to hotness rather than relevance

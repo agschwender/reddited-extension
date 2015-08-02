@@ -1,13 +1,12 @@
 function reddited_get_canonical_uris() {
-    var heads = document.getElementsByTagName('head')
-    if (!heads.length) { return; }
+    var heads = document.getElementsByTagName('head');
+    if (!heads.length) { return []; }
 
-    var uris = [];
-    // prefer og:url over canonical since companies are
-    // incentivized to keep it accurate
+    var uris = [], attrs, i;
+
     var metas = heads[0].getElementsByTagName('meta');
-    for (var i = 0; i < metas.length; i++) {
-        var attrs = metas[i].attributes;
+    for (i = 0; i < metas.length; i++) {
+        attrs = metas[i].attributes;
         if (attrs.property &&
             attrs.property.value.toLowerCase() == 'og:url' &&
             attrs.content &&
@@ -18,14 +17,17 @@ function reddited_get_canonical_uris() {
     }
 
     var links = heads[0].getElementsByTagName('link');
-    for (var i = 0; i < links.length; i++) {
-        var attrs = links[i].attributes;
+    for (i = 0; i < links.length; i++) {
+        attrs = links[i].attributes;
         if (attrs.rel &&
-            attrs.rel.value.toLowerCase() == 'canonical' &&
+            (attrs.rel.value.toLowerCase() == 'canonical' ||
+             (attrs.rel.value.toLowerCase() == 'alternate' &&
+              attrs.media &&
+              attrs.media.value.toLowerCase() == 'handheld') ||
+             attrs.rel.value.toLowerCase() == 'shortlink') &&
             attrs.href &&
             attrs.href.value) {
             uris.push(attrs.href.value);
-            break;
         }
     }
 

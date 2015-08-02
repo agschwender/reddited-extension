@@ -8,7 +8,7 @@ Reddited._make_reddit_search_string = function(uri, canonical_uris) {
         uris[i] = uris[i].replace(/\#[^\!].*$/, '').replace(/\#$/, '');
     }
     uris = $.unique(uris);
-    var final_uris = []
+    var final_uris = [];
     for (i = 0; i < uris.length; i++) {
         var has_substring = false;
         for (var j = 0; j < uris.length; j++) {
@@ -138,7 +138,7 @@ Reddited.Cache.prototype.set = function(key, value, ttl) {
 };
 
 Reddited.Cache.prototype.get = function(key) {
-    var obj = this._cache[key] || {}
+    var obj = this._cache[key] || {};
     var now = new Date();
     if ((obj.expiry || now) < now) { return false; }
     return obj.value || false;
@@ -370,7 +370,7 @@ Reddited.Finder.prototype._handle_response = function(uri, response, xhr) {
 };
 
 Reddited.Finder.prototype.request_uri_details = function(uri, opts) {
-    opts = opts || {}
+    opts = opts || {};
     if (!uri) {
         return this.onRequestError(Reddited.Finder.REQUEST_ERROR_EMPTY);
     } else if (uri.indexOf('http://www.reddit.com/r/') == 0) {
